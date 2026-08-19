@@ -14,10 +14,19 @@ public class LuigiBot {
         while (true) {
             userInput = scanner.nextLine();
 
+            //Check if user types bye
+            if (userInput.equals("bye")){
+                scanner.close();
+                break;
+            }
+
             System.out.println(LINE);
             System.out.println(userInput);
             System.out.println(LINE);
         }
+
+        //Only happens when user says bye
+        printGoodbye();
     }
 
     /**
