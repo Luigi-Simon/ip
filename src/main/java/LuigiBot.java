@@ -1,10 +1,38 @@
 public class LuigiBot {
+    //Constant line for easy print
+    private static final String LINE = "____________________________________________________________";
     public static void main(String[] args) {
-        String banner = " ____        _        \n"
-                + "|  _ \\ _   _| | _____ \n"
-                + "| | | | | | | |/ / _ \\\n"
-                + "| |_| | |_| |   <  __/\n"
-                + "|____/ \\__,_|_|\\_\\___|\n";
-        System.out.println(banner);
+        //Start of program
+        printGreeting();
+
+        //End of program
+        printGoodbye();
+    }
+
+    /**
+     * Helper for welcome banner
+     */
+    private static void printGreeting() {
+        System.out.println(LINE);
+        String banner = ".____          .__       .____________        __   \n"
+                + "|    |    __ __|__| ____ |__\\______   \\ _____/  |_\n"
+                + "|    |   |  |  \\  |/ ___\\|  ||    |  _//  _ \\   __\\\n"
+                + "|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | \n"
+                + "|_______ \\____/|__\\___  /|__||______  /\\____/|__|\n"
+                + "        \\/       /_____/            \\/             \n";
+        System.out.print(banner); // Using print instead of println because the banner already ends with \n
+        System.out.println(LINE);
+        System.out.println("Its a-me,LuigiBot!");
+        System.out.println("What can I do for you?");
+        System.out.println(LINE);
+    }
+
+    /**
+     * Prints the exit message.
+     */
+    private static void printGoodbye() {
+        System.out.println("Bye. Hope to see you again soon!");
+        System.out.println(LINE);
     }
 }
+
