@@ -51,7 +51,7 @@ public class LuigiBot {
      * Prints the exit message.
      */
     private static void printGoodbye() {
-        System.out.println("Bye. Hope to see you again soon!");
+        System.out.println("Mama mia! Leaving already? Cya soon!");
         System.out.println(LINE);
     }
 }
