@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class LuigiBot {
     //Constant line for easy print
     private static final String LINE = "____________________________________________________________";
@@ -5,8 +7,17 @@ public class LuigiBot {
         //Start of program
         printGreeting();
 
-        //End of program
-        printGoodbye();
+        Scanner scanner = new Scanner(System.in);
+        String userInput;
+
+        //Loop to echo user input
+        while (true) {
+            userInput = scanner.nextLine();
+
+            System.out.println(LINE);
+            System.out.println(userInput);
+            System.out.println(LINE);
+        }
     }
 
     /**
