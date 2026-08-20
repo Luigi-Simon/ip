@@ -1,32 +1,60 @@
 import java.util.Scanner;
 
 public class LuigiBot {
-    //Constant line for easy print
+    // Constant line for easy printing
     private static final String LINE = "____________________________________________________________";
+    private static final int MAX_TASKS = 100;
+
     public static void main(String[] args) {
-        //Start of program
         printGreeting();
 
         Scanner scanner = new Scanner(System.in);
-        String userInput;
+        String[] tasks = new String[MAX_TASKS];
+        int taskCount = 0;
 
-        //Loop to echo user input
         while (true) {
-            userInput = scanner.nextLine();
+            String userInput = scanner.nextLine();
 
-            //Check if user types bye
-            if (userInput.equals("bye")){
-                scanner.close();
+            if (userInput.equals("bye")) {
                 break;
             }
 
-            System.out.println(LINE);
-            System.out.println(userInput);
-            System.out.println(LINE);
+            if (userInput.equals("list")) {
+                printTaskList(tasks, taskCount);
+            } else {
+                tasks[taskCount] = userInput;
+                taskCount++;
+                printTaskAdded(userInput);
+            }
         }
 
-        //Only happens when user says bye
+        scanner.close();
         printGoodbye();
+    }
+
+    /**
+     * Prints confirmation that a task has been stored.
+     *
+     * @param task task that was stored
+     */
+    private static void printTaskAdded(String task) {
+        System.out.println(LINE);
+        System.out.println("added: " + task);
+        System.out.println(LINE);
+    }
+
+    /**
+     * Prints all stored tasks using numbering that starts from 1.
+     *
+     * @param tasks stored tasks
+     * @param taskCount number of stored tasks
+     */
+    private static void printTaskList(String[] tasks, int taskCount) {
+        System.out.println(LINE);
+        for (int i = 0; i < taskCount; i++) {
+            System.out.println((i + 1) + ". " + tasks[i]);
+        }
+        System.out.println(LINE);
     }
 
     /**
