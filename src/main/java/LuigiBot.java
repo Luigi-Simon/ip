@@ -26,29 +26,70 @@ public class LuigiBot {
                 updateTaskStatus(userInput.substring(4).trim(), tasks, taskCount, true);
             } else if (userInput.equals("list")) {
                 printTaskList(tasks, taskCount);
-            } else if (userInput.startsWith("todo ")) {
-                Todo todo = new Todo(userInput.substring(5));
-                tasks[taskCount] = todo;
-                taskCount++;
-                printTaskAdded(todo, taskCount);
-            } else if (userInput.startsWith("deadline ")) {
-                int byIndex = userInput.indexOf(" /by ");
-                String description = userInput.substring(9, byIndex);
-                String by = userInput.substring(byIndex + 5);
-                Deadline deadline = new Deadline(description, by);
-                tasks[taskCount] = deadline;
-                taskCount++;
-                printTaskAdded(deadline, taskCount);
-            } else if (userInput.startsWith("event ")) {
-                int fromIndex = userInput.indexOf(" /from ");
-                int toIndex = userInput.indexOf(" /to ");
-                String description = userInput.substring(6, fromIndex);
-                String from = userInput.substring(fromIndex + 7, toIndex);
-                String to = userInput.substring(toIndex + 5);
-                Event event = new Event(description, from, to);
-                tasks[taskCount] = event;
-                taskCount++;
-                printTaskAdded(event, taskCount);
+            } else if (userInput.equals("todo") || userInput.startsWith("todo ")) {
+                String description = userInput.substring(4).trim();
+                if (description.isEmpty()) {
+                    printError("Mamma mia! The task description can't-a be empty.");
+                } else {
+                    Todo todo = new Todo(description);
+                    tasks[taskCount] = todo;
+                    taskCount++;
+                    printTaskAdded(todo, taskCount);
+                }
+            } else if (userInput.equals("deadline") || userInput.startsWith("deadline ")) {
+                String deadlineDetails = userInput.substring(8).trim();
+                int byIndex = deadlineDetails.indexOf("/by");
+                boolean hasByMarker = byIndex >= 0
+                        && (byIndex == 0 || Character.isWhitespace(deadlineDetails.charAt(byIndex - 1)))
+                        && (byIndex + 3 == deadlineDetails.length()
+                        || Character.isWhitespace(deadlineDetails.charAt(byIndex + 3)));
+
+                if (!hasByMarker) {
+                    printError("Oh no! Luigi needs-a know the deadline! Use /by.");
+                } else {
+                    String description = deadlineDetails.substring(0, byIndex).trim();
+                    String by = deadlineDetails.substring(byIndex + 3).trim();
+                    if (description.isEmpty()) {
+                        printError("Mamma mia! The task description can't-a be empty.");
+                    } else if (by.isEmpty()) {
+                        printError("Oh no! Luigi needs-a know the deadline! Use /by.");
+                    } else {
+                        Deadline deadline = new Deadline(description, by);
+                        tasks[taskCount] = deadline;
+                        taskCount++;
+                        printTaskAdded(deadline, taskCount);
+                    }
+                }
+            } else if (userInput.equals("event") || userInput.startsWith("event ")) {
+                String eventDetails = userInput.substring(5).trim();
+                int fromIndex = eventDetails.indexOf("/from");
+                int toIndex = eventDetails.indexOf("/to");
+                boolean hasFromMarker = fromIndex >= 0
+                        && (fromIndex == 0 || Character.isWhitespace(eventDetails.charAt(fromIndex - 1)))
+                        && (fromIndex + 5 == eventDetails.length()
+                        || Character.isWhitespace(eventDetails.charAt(fromIndex + 5)));
+                boolean hasToMarker = toIndex >= 0
+                        && (toIndex == 0 || Character.isWhitespace(eventDetails.charAt(toIndex - 1)))
+                        && (toIndex + 3 == eventDetails.length()
+                        || Character.isWhitespace(eventDetails.charAt(toIndex + 3)));
+
+                if (!hasFromMarker || !hasToMarker || fromIndex >= toIndex) {
+                    printError("Mamma mia! Use: event DESCRIPTION /from START /to END.");
+                } else {
+                    String description = eventDetails.substring(0, fromIndex).trim();
+                    String from = eventDetails.substring(fromIndex + 5, toIndex).trim();
+                    String to = eventDetails.substring(toIndex + 3).trim();
+                    if (description.isEmpty()) {
+                        printError("Mamma mia! The task description can't-a be empty.");
+                    } else if (from.isEmpty() || to.isEmpty()) {
+                        printError("Mamma mia! Use: event DESCRIPTION /from START /to END.");
+                    } else {
+                        Event event = new Event(description, from, to);
+                        tasks[taskCount] = event;
+                        taskCount++;
+                        printTaskAdded(event, taskCount);
+                    }
+                }
             } else {
                 printError("Oh no! Luigi doesn't-a recognize that command.");
             }
