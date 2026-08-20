@@ -51,26 +51,11 @@ public class LuigiBot {
                 tasks[taskCount] = event;
                 taskCount++;
                 printTaskAdded(event, taskCount);
-            } else {
-                tasks[taskCount] = new Task(userInput);
-                taskCount++;
-                printTaskAdded(userInput);
             }
         }
 
         scanner.close();
         printGoodbye();
-    }
-
-    /**
-     * Prints confirmation that a task has been stored.
-     *
-     * @param task task that was stored
-     */
-    private static void printTaskAdded(String task) {
-        System.out.println(LINE);
-        System.out.println("Okie-dokie! Luigi added: " + task);
-        System.out.println(LINE);
     }
 
     /**
