@@ -20,14 +20,10 @@ public class LuigiBot {
             }
             if (userInput.isBlank()) {
                 printError("Mamma mia! You didn't-a enter a command.");
-            } else if (userInput.startsWith("unmark ")) {
-                int taskIndex = Integer.parseInt(userInput.substring(7)) - 1;
-                tasks[taskIndex].unmark();
-                printTaskUnmarked(tasks[taskIndex]);
-            } else if (userInput.startsWith("mark ")) {
-                int taskIndex = Integer.parseInt(userInput.substring(5)) - 1;
-                tasks[taskIndex].mark();
-                printTaskMarked(tasks[taskIndex]);
+            } else if (userInput.equals("unmark") || userInput.startsWith("unmark ")) {
+                updateTaskStatus(userInput.substring(6).trim(), tasks, taskCount, false);
+            } else if (userInput.equals("mark") || userInput.startsWith("mark ")) {
+                updateTaskStatus(userInput.substring(4).trim(), tasks, taskCount, true);
             } else if (userInput.equals("list")) {
                 printTaskList(tasks, taskCount);
             } else if (userInput.startsWith("todo ")) {
@@ -98,6 +94,36 @@ public class LuigiBot {
         System.out.println("No problem! Luigi marked this task as not done:");
         System.out.println("  " + task);
         System.out.println(LINE);
+    }
+
+    /**
+     * Validates a task number and updates the selected task's completion status.
+     *
+     * @param taskNumberText user-provided task number
+     * @param tasks stored tasks
+     * @param taskCount number of stored tasks
+     * @param markAsDone whether the selected task should be marked as done
+     */
+    private static void updateTaskStatus(String taskNumberText, Task[] tasks,
+                                         int taskCount, boolean markAsDone) {
+        try {
+            int taskNumber = Integer.parseInt(taskNumberText);
+            if (taskNumber < 1 || taskNumber > taskCount) {
+                printError("Oh no! Luigi can't-a find that task number.");
+                return;
+            }
+
+            Task task = tasks[taskNumber - 1];
+            if (markAsDone) {
+                task.mark();
+                printTaskMarked(task);
+            } else {
+                task.unmark();
+                printTaskUnmarked(task);
+            }
+        } catch (NumberFormatException exception) {
+            printError("Mamma mia! Please-a enter a whole task number.");
+        }
     }
 
     /**
