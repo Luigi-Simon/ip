@@ -10,6 +10,7 @@ public class LuigiBot {
 
         Scanner scanner = new Scanner(System.in);
         String[] tasks = new String[MAX_TASKS];
+        boolean[] isDone = new boolean[MAX_TASKS];
         int taskCount = 0;
 
         while (true) {
@@ -18,9 +19,12 @@ public class LuigiBot {
             if (userInput.equals("bye")) {
                 break;
             }
-
-            if (userInput.equals("list")) {
-                printTaskList(tasks, taskCount);
+            if (userInput.startsWith("mark ")) {
+                int taskIndex = Integer.parseInt(userInput.substring(5)) - 1;
+                isDone[taskIndex] = true;
+                printTaskMarked(tasks[taskIndex]);
+            } else if (userInput.equals("list")) {
+                printTaskList(tasks, isDone, taskCount);
             } else {
                 tasks[taskCount] = userInput;
                 taskCount++;
@@ -44,15 +48,28 @@ public class LuigiBot {
     }
 
     /**
+     * Prints confirmation that a task has been marked as done.
+     *
+     * @param task task that was marked
+     */
+    private static void printTaskMarked(String task) {
+        System.out.println(LINE);
+        System.out.println("marked: [X] " + task);
+        System.out.println(LINE);
+    }
+
+    /**
      * Prints all stored tasks using numbering that starts from 1.
      *
      * @param tasks stored tasks
+     * @param isDone completion status of each task
      * @param taskCount number of stored tasks
      */
-    private static void printTaskList(String[] tasks, int taskCount) {
+    private static void printTaskList(String[] tasks, boolean[] isDone, int taskCount) {
         System.out.println(LINE);
         for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + ". " + tasks[i]);
+            String status = isDone[i] ? "[X]" : "[ ]";
+            System.out.println((i + 1) + ". " + status + " " + tasks[i]);
         }
         System.out.println(LINE);
     }
@@ -83,4 +100,3 @@ public class LuigiBot {
         System.out.println(LINE);
     }
 }
-
