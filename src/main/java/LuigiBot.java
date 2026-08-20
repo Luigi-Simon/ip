@@ -28,6 +28,11 @@ public class LuigiBot {
                 printTaskMarked(tasks[taskIndex]);
             } else if (userInput.equals("list")) {
                 printTaskList(tasks, taskCount);
+            } else if (userInput.startsWith("todo ")) {
+                Todo todo = new Todo(userInput.substring(5));
+                tasks[taskCount] = todo;
+                taskCount++;
+                printTaskAdded(todo, taskCount);
             } else {
                 tasks[taskCount] = new Task(userInput);
                 taskCount++;
@@ -47,6 +52,20 @@ public class LuigiBot {
     private static void printTaskAdded(String task) {
         System.out.println(LINE);
         System.out.println("added: " + task);
+        System.out.println(LINE);
+    }
+
+    /**
+     * Prints confirmation that a typed task has been stored.
+     *
+     * @param task task that was stored
+     * @param taskCount number of stored tasks after adding the task
+     */
+    private static void printTaskAdded(Task task, int taskCount) {
+        System.out.println(LINE);
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + task);
+        System.out.println("Now you have " + taskCount + " tasks in the list.");
         System.out.println(LINE);
     }
 
@@ -80,8 +99,9 @@ public class LuigiBot {
      */
     private static void printTaskList(Task[] tasks, int taskCount) {
         System.out.println(LINE);
+        System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + ". " + tasks[i]);
+            System.out.println((i + 1) + "." + tasks[i]);
         }
         System.out.println(LINE);
     }
