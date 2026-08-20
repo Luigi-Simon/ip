@@ -33,6 +33,14 @@ public class LuigiBot {
                 tasks[taskCount] = todo;
                 taskCount++;
                 printTaskAdded(todo, taskCount);
+            } else if (userInput.startsWith("deadline ")) {
+                int byIndex = userInput.indexOf(" /by ");
+                String description = userInput.substring(9, byIndex);
+                String by = userInput.substring(byIndex + 5);
+                Deadline deadline = new Deadline(description, by);
+                tasks[taskCount] = deadline;
+                taskCount++;
+                printTaskAdded(deadline, taskCount);
             } else {
                 tasks[taskCount] = new Task(userInput);
                 taskCount++;
