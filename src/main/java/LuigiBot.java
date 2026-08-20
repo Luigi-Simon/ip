@@ -41,6 +41,16 @@ public class LuigiBot {
                 tasks[taskCount] = deadline;
                 taskCount++;
                 printTaskAdded(deadline, taskCount);
+            } else if (userInput.startsWith("event ")) {
+                int fromIndex = userInput.indexOf(" /from ");
+                int toIndex = userInput.indexOf(" /to ");
+                String description = userInput.substring(6, fromIndex);
+                String from = userInput.substring(fromIndex + 7, toIndex);
+                String to = userInput.substring(toIndex + 5);
+                Event event = new Event(description, from, to);
+                tasks[taskCount] = event;
+                taskCount++;
+                printTaskAdded(event, taskCount);
             } else {
                 tasks[taskCount] = new Task(userInput);
                 taskCount++;
