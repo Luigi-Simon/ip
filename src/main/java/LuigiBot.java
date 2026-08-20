@@ -9,8 +9,7 @@ public class LuigiBot {
         printGreeting();
 
         Scanner scanner = new Scanner(System.in);
-        String[] tasks = new String[MAX_TASKS];
-        boolean[] isDone = new boolean[MAX_TASKS];
+        Task[] tasks = new Task[MAX_TASKS];
         int taskCount = 0;
 
         while (true) {
@@ -21,16 +20,16 @@ public class LuigiBot {
             }
             if (userInput.startsWith("unmark ")) {
                 int taskIndex = Integer.parseInt(userInput.substring(7)) - 1;
-                isDone[taskIndex] = false;
+                tasks[taskIndex].unmark();
                 printTaskUnmarked(tasks[taskIndex]);
             } else if (userInput.startsWith("mark ")) {
                 int taskIndex = Integer.parseInt(userInput.substring(5)) - 1;
-                isDone[taskIndex] = true;
+                tasks[taskIndex].mark();
                 printTaskMarked(tasks[taskIndex]);
             } else if (userInput.equals("list")) {
-                printTaskList(tasks, isDone, taskCount);
+                printTaskList(tasks, taskCount);
             } else {
-                tasks[taskCount] = userInput;
+                tasks[taskCount] = new Task(userInput);
                 taskCount++;
                 printTaskAdded(userInput);
             }
@@ -56,9 +55,9 @@ public class LuigiBot {
      *
      * @param task task that was marked
      */
-    private static void printTaskMarked(String task) {
+    private static void printTaskMarked(Task task) {
         System.out.println(LINE);
-        System.out.println("marked: [X] " + task);
+        System.out.println("marked: " + task);
         System.out.println(LINE);
     }
 
@@ -67,9 +66,9 @@ public class LuigiBot {
      *
      * @param task task that was unmarked
      */
-    private static void printTaskUnmarked(String task) {
+    private static void printTaskUnmarked(Task task) {
         System.out.println(LINE);
-        System.out.println("unmarked: [ ] " + task);
+        System.out.println("unmarked: " + task);
         System.out.println(LINE);
     }
 
@@ -77,14 +76,12 @@ public class LuigiBot {
      * Prints all stored tasks using numbering that starts from 1.
      *
      * @param tasks stored tasks
-     * @param isDone completion status of each task
      * @param taskCount number of stored tasks
      */
-    private static void printTaskList(String[] tasks, boolean[] isDone, int taskCount) {
+    private static void printTaskList(Task[] tasks, int taskCount) {
         System.out.println(LINE);
         for (int i = 0; i < taskCount; i++) {
-            String status = isDone[i] ? "[X]" : "[ ]";
-            System.out.println((i + 1) + ". " + status + " " + tasks[i]);
+            System.out.println((i + 1) + ". " + tasks[i]);
         }
         System.out.println(LINE);
     }
