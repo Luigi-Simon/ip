@@ -69,7 +69,7 @@ public class LuigiBot {
      */
     private static void printTaskAdded(String task) {
         System.out.println(LINE);
-        System.out.println("added: " + task);
+        System.out.println("Okie-dokie! Luigi added: " + task);
         System.out.println(LINE);
     }
 
@@ -81,9 +81,9 @@ public class LuigiBot {
      */
     private static void printTaskAdded(Task task, int taskCount) {
         System.out.println(LINE);
-        System.out.println("Got it. I've added this task:");
+        System.out.println("Okie-dokie! Luigi added this task:");
         System.out.println("  " + task);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        System.out.println("You've-a got " + taskCount + " tasks now!");
         System.out.println(LINE);
     }
 
@@ -94,7 +94,8 @@ public class LuigiBot {
      */
     private static void printTaskMarked(Task task) {
         System.out.println(LINE);
-        System.out.println("marked: " + task);
+        System.out.println("Nice-a! Luigi marked this task as done:");
+        System.out.println("  " + task);
         System.out.println(LINE);
     }
 
@@ -105,7 +106,8 @@ public class LuigiBot {
      */
     private static void printTaskUnmarked(Task task) {
         System.out.println(LINE);
-        System.out.println("unmarked: " + task);
+        System.out.println("No problem! Luigi marked this task as not done:");
+        System.out.println("  " + task);
         System.out.println(LINE);
     }
 
@@ -117,7 +119,7 @@ public class LuigiBot {
      */
     private static void printTaskList(Task[] tasks, int taskCount) {
         System.out.println(LINE);
-        System.out.println("Here are the tasks in your list:");
+        System.out.println("Let's-a see what Luigi has on the list:");
         for (int i = 0; i < taskCount; i++) {
             System.out.println((i + 1) + "." + tasks[i]);
         }
