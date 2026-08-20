@@ -19,7 +19,11 @@ public class LuigiBot {
             if (userInput.equals("bye")) {
                 break;
             }
-            if (userInput.startsWith("mark ")) {
+            if (userInput.startsWith("unmark ")) {
+                int taskIndex = Integer.parseInt(userInput.substring(7)) - 1;
+                isDone[taskIndex] = false;
+                printTaskUnmarked(tasks[taskIndex]);
+            } else if (userInput.startsWith("mark ")) {
                 int taskIndex = Integer.parseInt(userInput.substring(5)) - 1;
                 isDone[taskIndex] = true;
                 printTaskMarked(tasks[taskIndex]);
@@ -55,6 +59,17 @@ public class LuigiBot {
     private static void printTaskMarked(String task) {
         System.out.println(LINE);
         System.out.println("marked: [X] " + task);
+        System.out.println(LINE);
+    }
+
+    /**
+     * Prints confirmation that a task has been marked as not done.
+     *
+     * @param task task that was unmarked
+     */
+    private static void printTaskUnmarked(String task) {
+        System.out.println(LINE);
+        System.out.println("unmarked: [ ] " + task);
         System.out.println(LINE);
     }
 
