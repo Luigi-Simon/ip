@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+"""Run LuigiBot console test cases defined in a Markdown test plan."""
+
+from __future__ import annotations
+
+import re
+import subprocess
+import sys
+import tempfile
+from dataclasses import dataclass
+from pathlib import Path
+
+
+@dataclass(frozen=True)
+class TestCase:
+    """One isolated console session and its exact expected output."""
+
+    name: str
+    aim: str
+    input_text: str
+    expected_output: str
+
+
+def extract_block(body: str, heading: str, case_name: str) -> str:
+    """Extract one text-fenced block following the requested heading."""
+    pattern = re.compile(
+        rf"^### {re.escape(heading)}\s*\n\s*```text\n(.*?)\n```",
+        re.MULTILINE | re.DOTALL,
+    )
+    match = pattern.search(body)
+    if match is None:
+        raise ValueError(f"Test case '{case_name}' has no {heading!r} text block")
+    return match.group(1)
+
+
+def parse_test_plan(plan_path: Path) -> list[TestCase]:
+    """Parse test cases from the project's Markdown UI test plan."""
+    content = plan_path.read_text(encoding="utf-8").replace("\r\n", "\n")
+    case_pattern = re.compile(
+        r"^## Test case: (?P<name>[^\n]+)\n(?P<body>.*?)(?=^## Test case: |\Z)",
+        re.MULTILINE | re.DOTALL,
+    )
+    cases: list[TestCase] = []
+
+    for match in case_pattern.finditer(content):
+        name = match.group("name").strip()
+        body = match.group("body")
+        aim_match = re.search(r"^\*\*Aim:\*\*\s*(.+)$", body, re.MULTILINE)
+        if aim_match is None:
+            raise ValueError(f"Test case '{name}' has no aim")
+        cases.append(
+            TestCase(
+                name=name,
+                aim=aim_match.group(1).strip(),
+                input_text=extract_block(body, "Input", name),
+                expected_output=extract_block(body, "Expected output", name),
+            )
+        )
+
+    if not cases:
+        raise ValueError(f"No test cases found in {plan_path}")
+    return cases
+
+
+def compile_program(repo_root: Path, classes_dir: Path) -> None:
+    """Compile all project Java sources into a temporary directory."""
+    sources = sorted((repo_root / "src" / "main" / "java").glob("*.java"))
+    if not sources:
+        raise RuntimeError("No Java source files found in src/main/java")
+    result = subprocess.run(
+        ["javac", "-d", str(classes_dir), *(str(source) for source in sources)],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"Compilation failed:\n{result.stdout}{result.stderr}")
+
+
+def run_case(repo_root: Path, classes_dir: Path, case: TestCase) -> str:
+    """Run one fresh LuigiBot process and return normalized console output."""
+    session_input = case.input_text + "\n"
+    result = subprocess.run(
+        ["java", "-cp", str(classes_dir), "LuigiBot"],
+        cwd=repo_root,
+        input=session_input,
+        capture_output=True,
+        text=True,
+        timeout=15,
+        check=False,
+    )
+    actual = (result.stdout + result.stderr).replace("\r\n", "\n").rstrip("\n")
+    if result.returncode != 0:
+        actual += f"\n[process exited with code {result.returncode}]"
+    return actual
+
+
+def print_transcript(case: TestCase, actual: str) -> None:
+    """Print a readable record of console input and output."""
+    print(f"\n=== {case.name} ===")
+    print(f"Aim: {case.aim}")
+    print("--- Console input ---")
+    for command in case.input_text.splitlines():
+        print(f"> {command}")
+    print("--- Console output ---")
+    print(actual)
+
+
+def main() -> int:
+    """Compile LuigiBot and execute test cases, stopping at first failure."""
+    repo_root = Path(__file__).resolve().parents[4]
+    plan_path = (
+        Path(sys.argv[1]).resolve()
+        if len(sys.argv) > 1
+        else repo_root / "test" / "ui-test-plan.md"
+    )
+
+    try:
+        cases = parse_test_plan(plan_path)
+        with tempfile.TemporaryDirectory(prefix="luigibot-ui-") as temp_dir:
+            classes_dir = Path(temp_dir)
+            compile_program(repo_root, classes_dir)
+            print(f"Running {len(cases)} UI test case(s) from {plan_path}")
+            for index, case in enumerate(cases, start=1):
+                actual = run_case(repo_root, classes_dir, case)
+                print_transcript(case, actual)
+                if actual != case.expected_output:
+                    print(f"\nFAIL: test case {index} - {case.name}")
+                    print("--- Expected output ---")
+                    print(case.expected_output)
+                    print("--- Actual output ---")
+                    print(actual)
+                    print("Testing terminated; later test cases were not run.")
+                    return 1
+                print(f"PASS: test case {index} - {case.name}")
+    except (OSError, RuntimeError, ValueError, subprocess.TimeoutExpired) as error:
+        print(f"ERROR: {error}", file=sys.stderr)
+        return 1
+
+    print(f"\nPASS: all {len(cases)} UI test case(s) passed.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
