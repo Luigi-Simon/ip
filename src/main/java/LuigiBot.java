@@ -32,9 +32,7 @@ public class LuigiBot {
                     printError("Mamma mia! The task description can't-a be empty.");
                 } else {
                     Todo todo = new Todo(description);
-                    tasks[taskCount] = todo;
-                    taskCount++;
-                    printTaskAdded(todo, taskCount);
+                    taskCount = addTask(todo, tasks, taskCount);
                 }
             } else if (userInput.equals("deadline") || userInput.startsWith("deadline ")) {
                 String deadlineDetails = userInput.substring(8).trim();
@@ -55,9 +53,7 @@ public class LuigiBot {
                         printError("Oh no! Luigi needs-a know the deadline! Use /by.");
                     } else {
                         Deadline deadline = new Deadline(description, by);
-                        tasks[taskCount] = deadline;
-                        taskCount++;
-                        printTaskAdded(deadline, taskCount);
+                        taskCount = addTask(deadline, tasks, taskCount);
                     }
                 }
             } else if (userInput.equals("event") || userInput.startsWith("event ")) {
@@ -85,9 +81,7 @@ public class LuigiBot {
                         printError("Mamma mia! Use: event DESCRIPTION /from START /to END.");
                     } else {
                         Event event = new Event(description, from, to);
-                        tasks[taskCount] = event;
-                        taskCount++;
-                        printTaskAdded(event, taskCount);
+                        taskCount = addTask(event, tasks, taskCount);
                     }
                 }
             } else {
@@ -97,6 +91,27 @@ public class LuigiBot {
 
         scanner.close();
         printGoodbye();
+    }
+
+    /**
+     * Adds a task when the task list has space and returns the updated task count.
+     * If the list is full, the task is rejected and the task count is unchanged.
+     *
+     * @param task task to add
+     * @param tasks array containing the stored tasks
+     * @param taskCount number of tasks currently stored
+     * @return the number of stored tasks after the addition attempt
+     */
+    private static int addTask(Task task, Task[] tasks, int taskCount) {
+        if (taskCount >= MAX_TASKS) {
+            printError("Mamma mia! Luigi's task list can only hold 100 tasks.");
+            return taskCount;
+        }
+
+        tasks[taskCount] = task;
+        int updatedTaskCount = taskCount + 1;
+        printTaskAdded(task, updatedTaskCount);
+        return updatedTaskCount;
     }
 
     /**
