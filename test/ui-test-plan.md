@@ -129,9 +129,9 @@ Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
 ```
 
-## Test case: Ignore unknown input
+## Test case: Reject unknown command
 
-**Aim:** Verify that arbitrary text is not automatically stored as a task.
+**Aim:** Verify that LuigiBot reports an unknown command without storing it as a task.
 
 ### Input
 
@@ -156,7 +156,42 @@ Its a-me,LuigiBot!
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
+Oh no! Luigi doesn't-a recognize that command.
+____________________________________________________________
+____________________________________________________________
 Let's-a see what Luigi has on the list:
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
+## Test case: Reject empty command
+
+**Aim:** Verify that LuigiBot reports an empty command and continues accepting input.
+
+### Input
+
+```text
+
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Mamma mia! You didn't-a enter a command.
 ____________________________________________________________
 Mama mia! Leaving already? Cya soon!
 ____________________________________________________________

@@ -18,7 +18,9 @@ public class LuigiBot {
             if (userInput.equals("bye")) {
                 break;
             }
-            if (userInput.startsWith("unmark ")) {
+            if (userInput.isBlank()) {
+                printError("Mamma mia! You didn't-a enter a command.");
+            } else if (userInput.startsWith("unmark ")) {
                 int taskIndex = Integer.parseInt(userInput.substring(7)) - 1;
                 tasks[taskIndex].unmark();
                 printTaskUnmarked(tasks[taskIndex]);
@@ -51,6 +53,8 @@ public class LuigiBot {
                 tasks[taskCount] = event;
                 taskCount++;
                 printTaskAdded(event, taskCount);
+            } else {
+                printError("Oh no! Luigi doesn't-a recognize that command.");
             }
         }
 
@@ -108,6 +112,17 @@ public class LuigiBot {
         for (int i = 0; i < taskCount; i++) {
             System.out.println((i + 1) + "." + tasks[i]);
         }
+        System.out.println(LINE);
+    }
+
+    /**
+     * Prints an error message between separator lines.
+     *
+     * @param message error message to show the user
+     */
+    private static void printError(String message) {
+        System.out.println(LINE);
+        System.out.println(message);
         System.out.println(LINE);
     }
 
