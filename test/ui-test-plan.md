@@ -635,9 +635,90 @@ ____________________________________________________________
 ```
 
 
-## Test case: Reject task beyond capacity
+## Test case: Delete tasks and preserve list state
 
-**Aim:** Verify that task 101 is rejected and does not change the full task list's count.
+**Aim:** Verify that valid deletions remove and renumber tasks while invalid delete commands leave the list unchanged.
+
+### Input
+
+```text
+todo read book
+deadline return book /by Sunday
+event project meeting /from Mon 2pm /to 4pm
+delete 2
+delete
+delete abc
+delete 0
+list
+delete 2
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [T][ ] read book
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [D][ ] return book (by: Sunday)
+You've-a got 2 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+You've-a got 3 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi removed this task:
+  [D][ ] return book (by: Sunday)
+You've-a got 2 tasks now!
+____________________________________________________________
+____________________________________________________________
+Oh no! Luigi can't-a find that task number.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Please-a enter a whole task number.
+____________________________________________________________
+____________________________________________________________
+Oh no! Luigi can't-a find that task number.
+____________________________________________________________
+____________________________________________________________
+Let's-a see what Luigi has on the list:
+1.[T][ ] read book
+2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi removed this task:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Let's-a see what Luigi has on the list:
+1.[T][ ] read book
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
+## Test case: Allow more than 100 tasks
+
+**Aim:** Verify that collection-backed task storage can add and update task 101.
 
 ### Input
 
@@ -1262,10 +1343,13 @@ Okie-dokie! Luigi added this task:
 You've-a got 100 tasks now!
 ____________________________________________________________
 ____________________________________________________________
-Mamma mia! Luigi's task list can only hold 100 tasks.
+Okie-dokie! Luigi added this task:
+  [T][ ] overflow
+You've-a got 101 tasks now!
 ____________________________________________________________
 ____________________________________________________________
-Oh no! Luigi can't-a find that task number.
+Nice-a! Luigi marked this task as done:
+  [T][X] overflow
 ____________________________________________________________
 Mama mia! Leaving already? Cya soon!
 ____________________________________________________________

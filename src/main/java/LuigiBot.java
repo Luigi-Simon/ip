@@ -1,16 +1,15 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class LuigiBot {
     // Constant line for easy printing
     private static final String LINE = "____________________________________________________________";
-    private static final int MAX_TASKS = 100;
-
     public static void main(String[] args) {
         printGreeting();
 
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        List<Task> tasks = new ArrayList<>();
 
         while (true) {
             String userInput = scanner.nextLine();
@@ -20,19 +19,21 @@ public class LuigiBot {
             }
             if (userInput.isBlank()) {
                 printError("Mamma mia! You didn't-a enter a command.");
+            } else if (userInput.equals("delete") || userInput.startsWith("delete ")) {
+                deleteTask(userInput.substring(6).trim(), tasks);
             } else if (userInput.equals("unmark") || userInput.startsWith("unmark ")) {
-                updateTaskStatus(userInput.substring(6).trim(), tasks, taskCount, false);
+                updateTaskStatus(userInput.substring(6).trim(), tasks, false);
             } else if (userInput.equals("mark") || userInput.startsWith("mark ")) {
-                updateTaskStatus(userInput.substring(4).trim(), tasks, taskCount, true);
+                updateTaskStatus(userInput.substring(4).trim(), tasks, true);
             } else if (userInput.equals("list")) {
-                printTaskList(tasks, taskCount);
+                printTaskList(tasks);
             } else if (userInput.equals("todo") || userInput.startsWith("todo ")) {
                 String description = userInput.substring(4).trim();
                 if (description.isEmpty()) {
                     printError("Mamma mia! The task description can't-a be empty.");
                 } else {
                     Todo todo = new Todo(description);
-                    taskCount = addTask(todo, tasks, taskCount);
+                    addTask(todo, tasks);
                 }
             } else if (userInput.equals("deadline") || userInput.startsWith("deadline ")) {
                 String deadlineDetails = userInput.substring(8).trim();
@@ -53,7 +54,7 @@ public class LuigiBot {
                         printError("Oh no! Luigi needs-a know the deadline! Use /by.");
                     } else {
                         Deadline deadline = new Deadline(description, by);
-                        taskCount = addTask(deadline, tasks, taskCount);
+                        addTask(deadline, tasks);
                     }
                 }
             } else if (userInput.equals("event") || userInput.startsWith("event ")) {
@@ -81,7 +82,7 @@ public class LuigiBot {
                         printError("Mamma mia! Use: event DESCRIPTION /from START /to END.");
                     } else {
                         Event event = new Event(description, from, to);
-                        taskCount = addTask(event, tasks, taskCount);
+                        addTask(event, tasks);
                     }
                 }
             } else {
@@ -94,24 +95,40 @@ public class LuigiBot {
     }
 
     /**
-     * Adds a task when the task list has space and returns the updated task count.
-     * If the list is full, the task is rejected and the task count is unchanged.
+     * Adds a task to the task list and prints a confirmation.
      *
      * @param task task to add
-     * @param tasks array containing the stored tasks
-     * @param taskCount number of tasks currently stored
-     * @return the number of stored tasks after the addition attempt
+     * @param tasks list containing the stored tasks
      */
-    private static int addTask(Task task, Task[] tasks, int taskCount) {
-        if (taskCount >= MAX_TASKS) {
-            printError("Mamma mia! Luigi's task list can only hold 100 tasks.");
-            return taskCount;
+    private static void addTask(Task task, List<Task> tasks) {
+        tasks.add(task);
+        printTaskAdded(task, tasks.size());
+    }
+
+    /**
+     * Validates a task number and removes the selected task.
+     *
+     * @param taskNumberText user-provided task number
+     * @param tasks list containing the stored tasks
+     */
+    private static void deleteTask(String taskNumberText, List<Task> tasks) {
+        if (taskNumberText.isEmpty()) {
+            printError("Oh no! Luigi can't-a find that task number.");
+            return;
         }
 
-        tasks[taskCount] = task;
-        int updatedTaskCount = taskCount + 1;
-        printTaskAdded(task, updatedTaskCount);
-        return updatedTaskCount;
+        try {
+            int taskNumber = Integer.parseInt(taskNumberText);
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
+                printError("Oh no! Luigi can't-a find that task number.");
+                return;
+            }
+
+            Task removedTask = tasks.remove(taskNumber - 1);
+            printTaskDeleted(removedTask, tasks.size());
+        } catch (NumberFormatException exception) {
+            printError("Mamma mia! Please-a enter a whole task number.");
+        }
     }
 
     /**
@@ -153,23 +170,36 @@ public class LuigiBot {
     }
 
     /**
+     * Prints confirmation that a task has been removed.
+     *
+     * @param task task that was removed
+     * @param taskCount number of stored tasks after removing the task
+     */
+    private static void printTaskDeleted(Task task, int taskCount) {
+        System.out.println(LINE);
+        System.out.println("Okie-dokie! Luigi removed this task:");
+        System.out.println("  " + task);
+        System.out.println("You've-a got " + taskCount + " tasks now!");
+        System.out.println(LINE);
+    }
+
+    /**
      * Validates a task number and updates the selected task's completion status.
      *
      * @param taskNumberText user-provided task number
      * @param tasks stored tasks
-     * @param taskCount number of stored tasks
      * @param markAsDone whether the selected task should be marked as done
      */
-    private static void updateTaskStatus(String taskNumberText, Task[] tasks,
-                                         int taskCount, boolean markAsDone) {
+    private static void updateTaskStatus(String taskNumberText, List<Task> tasks,
+                                         boolean markAsDone) {
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
-            if (taskNumber < 1 || taskNumber > taskCount) {
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
                 printError("Oh no! Luigi can't-a find that task number.");
                 return;
             }
 
-            Task task = tasks[taskNumber - 1];
+            Task task = tasks.get(taskNumber - 1);
             if (markAsDone) {
                 task.mark();
                 printTaskMarked(task);
@@ -186,13 +216,12 @@ public class LuigiBot {
      * Prints all stored tasks using numbering that starts from 1.
      *
      * @param tasks stored tasks
-     * @param taskCount number of stored tasks
      */
-    private static void printTaskList(Task[] tasks, int taskCount) {
+    private static void printTaskList(List<Task> tasks) {
         System.out.println(LINE);
         System.out.println("Let's-a see what Luigi has on the list:");
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + "." + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + "." + tasks.get(i));
         }
         System.out.println(LINE);
     }
