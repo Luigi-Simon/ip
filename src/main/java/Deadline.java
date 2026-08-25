@@ -24,4 +24,14 @@ public class Deadline extends Task {
     public String toString() {
         return "[D]" + super.toString() + " (by: " + this.by + ")";
     }
+
+    /**
+     * Returns this deadline in the text format used by the save file.
+     *
+     * @return save-file representation of this deadline
+     */
+    @Override
+    public String toFileString() {
+        return getFileString("D") + " | " + this.by;
+    }
 }

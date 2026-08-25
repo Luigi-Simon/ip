@@ -41,6 +41,84 @@ Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
 ```
 
+## Test case: Skip malformed saved tasks
+
+**Aim:** Verify that malformed save lines are reported and skipped without affecting valid loaded tasks.
+
+### Initial saved data
+
+```text
+T | 1 | read book
+Z | 0 | mystery task
+D | 0 | return book | Sunday
+T | 2 | invalid status
+E | 1 | project meeting | Mon 2pm | 4pm
+D | 0 | missing deadline
+T | 0 |
+E | 0 | extra event | Monday | Tuesday | extra field
+```
+
+### Input
+
+```text
+list
+todo borrow book
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi skipped-a an invalid saved task.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi skipped-a an invalid saved task.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi skipped-a an invalid saved task.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi skipped-a an invalid saved task.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi skipped-a an invalid saved task.
+____________________________________________________________
+____________________________________________________________
+Let's-a see what Luigi has on the list:
+1.[T][X] read book
+2.[D][ ] return book (by: Sunday)
+3.[E][X] project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [T][ ] borrow book
+You've-a got 4 tasks now!
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
+### Expected saved data
+
+```text
+T | 1 | read book
+D | 0 | return book | Sunday
+E | 1 | project meeting | Mon 2pm | 4pm
+T | 0 | borrow book
+```
+
 ## Test case: Add and list a Deadline
 
 **Aim:** Verify that LuigiBot stores and displays a Deadline with its `/by` value.
@@ -1350,6 +1428,189 @@ ____________________________________________________________
 ____________________________________________________________
 Nice-a! Luigi marked this task as done:
   [T][X] overflow
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
+## Test case: Save changed task list
+
+**Aim:** Verify that task additions, status changes, and deletion are saved in the expected text format.
+
+### Input
+
+```text
+todo read book
+deadline return book /by Sunday
+event project meeting /from Mon 2pm /to 4pm
+mark 1
+delete 2
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [T][ ] read book
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [D][ ] return book (by: Sunday)
+You've-a got 2 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+You've-a got 3 tasks now!
+____________________________________________________________
+____________________________________________________________
+Nice-a! Luigi marked this task as done:
+  [T][X] read book
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi removed this task:
+  [D][ ] return book (by: Sunday)
+You've-a got 2 tasks now!
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
+### Expected saved data
+
+```text
+T | 1 | read book
+E | 0 | project meeting | Mon 2pm | 4pm
+```
+
+## Test case: Load and update saved tasks
+
+**Aim:** Verify that saved task types and statuses load correctly and remain writable after startup.
+
+### Initial saved data
+
+```text
+T | 1 | read book
+D | 0 | return book | Sunday
+E | 1 | project meeting | Mon 2pm | 4pm
+```
+
+### Input
+
+```text
+list
+unmark 3
+delete 2
+todo borrow book
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Let's-a see what Luigi has on the list:
+1.[T][X] read book
+2.[D][ ] return book (by: Sunday)
+3.[E][X] project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+No problem! Luigi marked this task as not done:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi removed this task:
+  [D][ ] return book (by: Sunday)
+You've-a got 2 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [T][ ] borrow book
+You've-a got 3 tasks now!
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
+### Expected saved data
+
+```text
+T | 1 | read book
+E | 0 | project meeting | Mon 2pm | 4pm
+T | 0 | borrow book
+```
+
+## Test case: Handle unavailable task file
+
+**Aim:** Verify that task-file read and write failures are reported without terminating LuigiBot.
+
+### Initial save path
+
+```text
+directory
+```
+
+### Input
+
+```text
+todo read book
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi couldn't-a read the task file.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi couldn't-a save your tasks.
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [T][ ] read book
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Let's-a see what Luigi has on the list:
+1.[T][ ] read book
 ____________________________________________________________
 Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
