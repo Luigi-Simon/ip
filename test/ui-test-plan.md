@@ -52,7 +52,7 @@ T | 1 | read book
 Z | 0 | mystery task
 D | 0 | return book | 2019-12-02 1800
 T | 2 | invalid status
-E | 1 | project meeting | Mon 2pm | 4pm
+E | 1 | project meeting | 2019-12-02 1400 | 2019-12-02 1600
 D | 0 | missing deadline
 T | 0 |
 E | 0 | extra event | Monday | Tuesday | extra field
@@ -99,7 +99,7 @@ ____________________________________________________________
 Let's-a see what Luigi has on the list:
 1.[T][X] read book
 2.[D][ ] return book (by: Dec 02 2019, 6:00 PM)
-3.[E][X] project meeting (from: Mon 2pm to: 4pm)
+3.[E][X] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
@@ -115,7 +115,7 @@ ____________________________________________________________
 ```text
 T | 1 | read book
 D | 0 | return book | 2019-12-02 1800
-E | 1 | project meeting | Mon 2pm | 4pm
+E | 1 | project meeting | 2019-12-02 1400 | 2019-12-02 1600
 T | 0 | borrow book
 ```
 
@@ -215,12 +215,12 @@ ____________________________________________________________
 
 ## Test case: Mark and unmark an Event
 
-**Aim:** Verify that LuigiBot adds an Event and updates its status when marked and unmarked.
+**Aim:** Verify that LuigiBot parses and formats Event date-times while preserving status updates.
 
 ### Input
 
 ```text
-event project meeting /from Mon 2pm /to 4pm
+event project meeting /from 2019-12-02 1400 /to 2019-12-02 1600
 mark 1
 list
 unmark 1
@@ -243,20 +243,20 @@ What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 You've-a got 1 tasks now!
 ____________________________________________________________
 ____________________________________________________________
 Nice-a! Luigi marked this task as done:
-  [E][X] project meeting (from: Mon 2pm to: 4pm)
+  [E][X] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 Let's-a see what Luigi has on the list:
-1.[E][X] project meeting (from: Mon 2pm to: 4pm)
+1.[E][X] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 No problem! Luigi marked this task as not done:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
@@ -492,7 +492,7 @@ ____________________________________________________________
 ### Input
 
 ```text
-event /from Mon 2pm /to 4pm
+event /from 2019-12-02 1400 /to 2019-12-02 1600
 bye
 ```
 
@@ -580,7 +580,7 @@ todo read book
 deadline return book
 deadline return book /by 2019-12-06 1800
 event meeting /from 2pm
-event meeting /from 2pm /to 3pm
+event meeting /from 2019-12-02 1400 /to 2019-12-02 1600
 todo
 list
 bye
@@ -618,7 +618,7 @@ Mamma mia! Use: event DESCRIPTION /from START /to END.
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [E][ ] meeting (from: 2pm to: 3pm)
+  [E][ ] meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 You've-a got 3 tasks now!
 ____________________________________________________________
 ____________________________________________________________
@@ -628,7 +628,7 @@ ____________________________________________________________
 Let's-a see what Luigi has on the list:
 1.[T][ ] read book
 2.[D][ ] return book (by: Dec 06 2019, 6:00 PM)
-3.[E][ ] meeting (from: 2pm to: 3pm)
+3.[E][ ] meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
@@ -777,7 +777,7 @@ ____________________________________________________________
 ```text
 todo read book
 deadline return book /by 2019-12-02 1800
-event project meeting /from Mon 2pm /to 4pm
+event project meeting /from 2019-12-02 1400 /to 2019-12-02 1600
 delete 2
 delete
 delete abc
@@ -814,7 +814,7 @@ You've-a got 2 tasks now!
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 You've-a got 3 tasks now!
 ____________________________________________________________
 ____________________________________________________________
@@ -834,11 +834,11 @@ ____________________________________________________________
 ____________________________________________________________
 Let's-a see what Luigi has on the list:
 1.[T][ ] read book
-2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+2.[E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi removed this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 You've-a got 1 tasks now!
 ____________________________________________________________
 ____________________________________________________________
@@ -1497,7 +1497,7 @@ ____________________________________________________________
 ```text
 todo read book
 deadline return book /by 2019-12-02 1800
-event project meeting /from Mon 2pm /to 4pm
+event project meeting /from 2019-12-02 1400 /to 2019-12-02 1600
 mark 1
 delete 2
 bye
@@ -1529,7 +1529,7 @@ You've-a got 2 tasks now!
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 You've-a got 3 tasks now!
 ____________________________________________________________
 ____________________________________________________________
@@ -1549,7 +1549,7 @@ ____________________________________________________________
 
 ```text
 T | 1 | read book
-E | 0 | project meeting | Mon 2pm | 4pm
+E | 0 | project meeting | 2019-12-02 1400 | 2019-12-02 1600
 ```
 
 ## Test case: Load and update saved tasks
@@ -1561,7 +1561,7 @@ E | 0 | project meeting | Mon 2pm | 4pm
 ```text
 T | 1 | read book
 D | 0 | return book | 2019-12-02 1800
-E | 1 | project meeting | Mon 2pm | 4pm
+E | 1 | project meeting | 2019-12-02 1400 | 2019-12-02 1600
 ```
 
 ### Input
@@ -1592,11 +1592,11 @@ ____________________________________________________________
 Let's-a see what Luigi has on the list:
 1.[T][X] read book
 2.[D][ ] return book (by: Dec 02 2019, 6:00 PM)
-3.[E][X] project meeting (from: Mon 2pm to: 4pm)
+3.[E][X] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 No problem! Luigi marked this task as not done:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi removed this task:
@@ -1616,7 +1616,7 @@ ____________________________________________________________
 
 ```text
 T | 1 | read book
-E | 0 | project meeting | Mon 2pm | 4pm
+E | 0 | project meeting | 2019-12-02 1400 | 2019-12-02 1600
 T | 0 | borrow book
 ```
 

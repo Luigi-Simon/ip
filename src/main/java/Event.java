@@ -1,21 +1,32 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
+import java.util.Locale;
+
 /**
  * Represents a task that occurs during a specific time period.
  */
 public class Event extends Task {
-    private final String from;
-    private final String to;
+    private static final DateTimeFormatter INPUT_FORMAT =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm")
+                    .withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter DISPLAY_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd uuuu, h:mm a", Locale.ENGLISH);
+
+    private final LocalDateTime from;
+    private final LocalDateTime to;
 
     /**
-     * Creates an incomplete event with the given description and time period.
+     * Creates an incomplete event with the given description and date-time period.
      *
      * @param description description of the event
-     * @param from time at which the event starts
-     * @param to time at which the event ends
+     * @param from date and time at which the event starts, in yyyy-MM-dd HHmm format
+     * @param to date and time at which the event ends, in yyyy-MM-dd HHmm format
      */
     public Event(String description, String from, String to) {
         super(description);
-        this.from = from;
-        this.to = to;
+        this.from = LocalDateTime.parse(from, INPUT_FORMAT);
+        this.to = LocalDateTime.parse(to, INPUT_FORMAT);
     }
 
     /**
@@ -26,7 +37,8 @@ public class Event extends Task {
     @Override
     public String toString() {
         return "[E]" + super.toString()
-                + " (from: " + this.from + " to: " + this.to + ")";
+                + " (from: " + this.from.format(DISPLAY_FORMAT)
+                + " to: " + this.to.format(DISPLAY_FORMAT) + ")";
     }
 
     /**
@@ -36,6 +48,7 @@ public class Event extends Task {
      */
     @Override
     public String toFileString() {
-        return getFileString("E") + " | " + this.from + " | " + this.to;
+        return getFileString("E") + " | " + this.from.format(INPUT_FORMAT)
+                + " | " + this.to.format(INPUT_FORMAT);
     }
 }
