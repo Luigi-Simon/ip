@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
@@ -55,5 +56,18 @@ public class Event extends Task {
     public String toFileString() {
         return getFileString("E") + " | " + this.from.format(INPUT_FORMAT)
                 + " | " + this.to.format(INPUT_FORMAT);
+    }
+
+    /**
+     * Returns whether any part of this event occurs on the given date.
+     *
+     * @param date date to check
+     * @return true when the event overlaps the given date
+     */
+    @Override
+    public boolean occursOn(LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime startOfNextDay = date.plusDays(1).atStartOfDay();
+        return this.from.isBefore(startOfNextDay) && this.to.isAfter(startOfDay);
     }
 }

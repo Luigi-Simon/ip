@@ -624,6 +624,66 @@ Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
 ```
 
+## Test case: Find dated tasks on a specific date
+
+**Aim:** Verify that the `on` command finds Deadlines and Events occurring on a date while excluding Todos.
+
+### Input
+
+```text
+todo buy snacks
+deadline submit report /by 2019-12-02 1800
+event overnight meeting /from 2019-12-01 2300 /to 2019-12-02 0100
+on 2019-12-02
+on 2019-12-03
+on 2019-02-29
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [T][ ] buy snacks
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [D][ ] submit report (by: Dec 02 2019, 6:00 PM)
+You've-a got 2 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [E][ ] overnight meeting (from: Dec 01 2019, 11:00 PM to: Dec 02 2019, 1:00 AM)
+You've-a got 3 tasks now!
+____________________________________________________________
+____________________________________________________________
+Luigi found-a these tasks on Dec 02 2019:
+2.[D][ ] submit report (by: Dec 02 2019, 6:00 PM)
+3.[E][ ] overnight meeting (from: Dec 01 2019, 11:00 PM to: Dec 02 2019, 1:00 AM)
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi found-a no tasks on Dec 03 2019.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Use-a yyyy-MM-dd for the date.
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
 ## Test case: Invalid task creation preserves numbering
 
 **Aim:** Verify that rejected task commands do not change the task count or occupy list positions.
