@@ -30,6 +30,10 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 
 ## Code-change verification
 
+After every update to repository files:
+
+* Invoke the project-specific `$present-changes-visually` skill and report the generated visual diff.
+
 After every update to production code:
 
 * Review `test/ui-test-plan.md` and update it when the change affects observable console behavior or requires new UI coverage.
