@@ -356,6 +356,11 @@ public class LuigiBot {
      * @param tasks stored tasks
      */
     private static void printTasksOnDate(String dateText, List<Task> tasks) {
+        if (dateText.isEmpty()) {
+            printError("Mamma mia! Luigi needs-a date. Use: on yyyy-MM-dd.");
+            return;
+        }
+
         try {
             LocalDate date = LocalDate.parse(dateText, DATE_INPUT_FORMAT);
             List<Integer> matchingIndexes = new ArrayList<>();
