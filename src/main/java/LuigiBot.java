@@ -1,11 +1,25 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Runs LuigiBot's command-line task manager.
+ */
 public class LuigiBot {
     // Constant line for easy printing
     private static final String LINE = "____________________________________________________________";
-    public static void main(String[] args) {
+    private static final Path SAVE_PATH = Path.of("data", "luigibot.txt");
+
+    /**
+     * Starts LuigiBot and processes commands until the user exits.
+     *
+     * @param args command-line arguments, which are not used
+     * @throws IOException if LuigiBot cannot save the task list
+     */
+    public static void main(String[] args) throws IOException {
         printGreeting();
 
         Scanner scanner = new Scanner(System.in);
@@ -100,8 +114,9 @@ public class LuigiBot {
      * @param task task to add
      * @param tasks list containing the stored tasks
      */
-    private static void addTask(Task task, List<Task> tasks) {
+    private static void addTask(Task task, List<Task> tasks) throws IOException {
         tasks.add(task);
+        saveTasks(tasks);
         printTaskAdded(task, tasks.size());
     }
 
@@ -111,7 +126,7 @@ public class LuigiBot {
      * @param taskNumberText user-provided task number
      * @param tasks list containing the stored tasks
      */
-    private static void deleteTask(String taskNumberText, List<Task> tasks) {
+    private static void deleteTask(String taskNumberText, List<Task> tasks) throws IOException {
         if (taskNumberText.isEmpty()) {
             printError("Oh no! Luigi can't-a find that task number.");
             return;
@@ -125,6 +140,7 @@ public class LuigiBot {
             }
 
             Task removedTask = tasks.remove(taskNumber - 1);
+            saveTasks(tasks);
             printTaskDeleted(removedTask, tasks.size());
         } catch (NumberFormatException exception) {
             printError("Mamma mia! Please-a enter a whole task number.");
@@ -191,7 +207,7 @@ public class LuigiBot {
      * @param markAsDone whether the selected task should be marked as done
      */
     private static void updateTaskStatus(String taskNumberText, List<Task> tasks,
-                                         boolean markAsDone) {
+                                         boolean markAsDone) throws IOException {
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
@@ -202,14 +218,31 @@ public class LuigiBot {
             Task task = tasks.get(taskNumber - 1);
             if (markAsDone) {
                 task.mark();
+                saveTasks(tasks);
                 printTaskMarked(task);
             } else {
                 task.unmark();
+                saveTasks(tasks);
                 printTaskUnmarked(task);
             }
         } catch (NumberFormatException exception) {
             printError("Mamma mia! Please-a enter a whole task number.");
         }
+    }
+
+    /**
+     * Writes the current task list to the hard disk.
+     *
+     * @param tasks tasks to save
+     * @throws IOException if the task list cannot be written
+     */
+    private static void saveTasks(List<Task> tasks) throws IOException {
+        Files.createDirectories(SAVE_PATH.getParent());
+        List<String> taskData = new ArrayList<>();
+        for (Task task : tasks) {
+            taskData.add(task.toFileString());
+        }
+        Files.write(SAVE_PATH, taskData);
     }
 
     /**

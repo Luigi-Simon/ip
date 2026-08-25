@@ -28,4 +28,14 @@ public class Event extends Task {
         return "[E]" + super.toString()
                 + " (from: " + this.from + " to: " + this.to + ")";
     }
+
+    /**
+     * Returns this event in the text format used by the save file.
+     *
+     * @return save-file representation of this event
+     */
+    @Override
+    public String toFileString() {
+        return getFileString("E") + " | " + this.from + " | " + this.to;
+    }
 }

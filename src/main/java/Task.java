@@ -39,6 +39,26 @@ public class Task {
     }
 
     /**
+     * Returns this task in the text format used by the save file.
+     *
+     * @return save-file representation of this task
+     */
+    public String toFileString() {
+        return getFileString("T");
+    }
+
+    /**
+     * Builds the common save-file fields for a specific task type.
+     *
+     * @param taskType letter identifying the task type
+     * @return common save-file fields for this task
+     */
+    protected String getFileString(String taskType) {
+        String status = this.isDone ? "1" : "0";
+        return taskType + " | " + status + " | " + this.description;
+    }
+
+    /**
      * Returns the task's status icon followed by its description.
      *
      * @return display form of this task
