@@ -10,7 +10,7 @@ Use `test/ui-test-plan.md` as the source of truth for console test cases. Each c
 ## Workflow
 
 1. If the user supplies commands and expected outputs, record or update the corresponding cases in `test/ui-test-plan.md` before running them. Every case must have a name, aim, input block, and expected-output block.
-2. Preserve input and expected output exactly, including spaces, punctuation, blank lines, and separator lines. Include `bye` explicitly when the expected session includes the goodbye response. When a case also verifies persistence, add an optional `Expected saved data` text block. The runner compares it with `data/luigibot.txt` in that case's isolated temporary working directory.
+2. Preserve input and expected output exactly, including spaces, punctuation, blank lines, and separator lines. Include `bye` explicitly when the expected session includes the goodbye response. For persistence cases, use an optional `Initial saved data` text block to create `data/luigibot.txt` before startup and an optional `Expected saved data` text block to verify it after the session. Each case uses an isolated temporary working directory.
 3. From the repository root, run:
 
    ```powershell

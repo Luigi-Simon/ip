@@ -1418,3 +1418,71 @@ ____________________________________________________________
 T | 1 | read book
 E | 0 | project meeting | Mon 2pm | 4pm
 ```
+
+## Test case: Load and update saved tasks
+
+**Aim:** Verify that saved task types and statuses load correctly and remain writable after startup.
+
+### Initial saved data
+
+```text
+T | 1 | read book
+D | 0 | return book | Sunday
+E | 1 | project meeting | Mon 2pm | 4pm
+```
+
+### Input
+
+```text
+list
+unmark 3
+delete 2
+todo borrow book
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Let's-a see what Luigi has on the list:
+1.[T][X] read book
+2.[D][ ] return book (by: Sunday)
+3.[E][X] project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+No problem! Luigi marked this task as not done:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi removed this task:
+  [D][ ] return book (by: Sunday)
+You've-a got 2 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [T][ ] borrow book
+You've-a got 3 tasks now!
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
+### Expected saved data
+
+```text
+T | 1 | read book
+E | 0 | project meeting | Mon 2pm | 4pm
+T | 0 | borrow book
+```

@@ -23,7 +23,7 @@ public class LuigiBot {
         printGreeting();
 
         Scanner scanner = new Scanner(System.in);
-        List<Task> tasks = new ArrayList<>();
+        List<Task> tasks = loadTasks();
 
         while (true) {
             String userInput = scanner.nextLine();
@@ -243,6 +243,45 @@ public class LuigiBot {
             taskData.add(task.toFileString());
         }
         Files.write(SAVE_PATH, taskData);
+    }
+
+    /**
+     * Loads tasks from the save file, or returns an empty list when no file exists.
+     *
+     * @return tasks reconstructed from the save file
+     * @throws IOException if the save file cannot be read
+     */
+    private static List<Task> loadTasks() throws IOException {
+        List<Task> tasks = new ArrayList<>();
+        if (!Files.exists(SAVE_PATH)) {
+            return tasks;
+        }
+
+        for (String taskData : Files.readAllLines(SAVE_PATH)) {
+            tasks.add(parseTask(taskData));
+        }
+        return tasks;
+    }
+
+    /**
+     * Reconstructs one task from its save-file representation.
+     *
+     * @param taskData save-file representation of one task
+     * @return reconstructed task
+     */
+    private static Task parseTask(String taskData) {
+        String[] fields = taskData.split(" \\| ", -1);
+        Task task = switch (fields[0]) {
+            case "T" -> new Todo(fields[2]);
+            case "D" -> new Deadline(fields[2], fields[3]);
+            case "E" -> new Event(fields[2], fields[3], fields[4]);
+            default -> throw new IllegalArgumentException("Unknown task type: " + fields[0]);
+        };
+
+        if (fields[1].equals("1")) {
+            task.mark();
+        }
+        return task;
     }
 
     /**

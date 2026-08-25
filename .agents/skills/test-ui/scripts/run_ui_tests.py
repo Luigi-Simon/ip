@@ -19,6 +19,7 @@ class TestCase:
     aim: str
     input_text: str
     expected_output: str
+    initial_saved_data: str | None
     expected_saved_data: str | None
 
 
@@ -65,6 +66,7 @@ def parse_test_plan(plan_path: Path) -> list[TestCase]:
                 aim=aim_match.group(1).strip(),
                 input_text=extract_block(body, "Input", name),
                 expected_output=extract_block(body, "Expected output", name),
+                initial_saved_data=extract_optional_block(body, "Initial saved data"),
                 expected_saved_data=extract_optional_block(body, "Expected saved data"),
             )
         )
@@ -116,6 +118,13 @@ def read_saved_data(working_dir: Path) -> str | None:
     return save_path.read_text(encoding="utf-8").replace("\r\n", "\n").rstrip("\n")
 
 
+def write_initial_saved_data(working_dir: Path, saved_data: str) -> None:
+    """Create a LuigiBot save file for a persistence test case."""
+    save_path = working_dir / "data" / "luigibot.txt"
+    save_path.parent.mkdir()
+    save_path.write_text(saved_data + "\n", encoding="utf-8")
+
+
 def print_transcript(case: TestCase, actual: str) -> None:
     """Print a readable record of console input and output."""
     print(f"\n=== {case.name} ===")
@@ -145,6 +154,8 @@ def main() -> int:
             for index, case in enumerate(cases, start=1):
                 working_dir = Path(temp_dir) / f"case-{index}"
                 working_dir.mkdir()
+                if case.initial_saved_data is not None:
+                    write_initial_saved_data(working_dir, case.initial_saved_data)
                 actual = run_case(working_dir, classes_dir, case)
                 print_transcript(case, actual)
                 if actual != case.expected_output:
