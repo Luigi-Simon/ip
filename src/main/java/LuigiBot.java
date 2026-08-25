@@ -17,9 +17,8 @@ public class LuigiBot {
      * Starts LuigiBot and processes commands until the user exits.
      *
      * @param args command-line arguments, which are not used
-     * @throws IOException if LuigiBot cannot save the task list
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         printGreeting();
 
         Scanner scanner = new Scanner(System.in);
@@ -114,7 +113,7 @@ public class LuigiBot {
      * @param task task to add
      * @param tasks list containing the stored tasks
      */
-    private static void addTask(Task task, List<Task> tasks) throws IOException {
+    private static void addTask(Task task, List<Task> tasks) {
         tasks.add(task);
         saveTasks(tasks);
         printTaskAdded(task, tasks.size());
@@ -126,7 +125,7 @@ public class LuigiBot {
      * @param taskNumberText user-provided task number
      * @param tasks list containing the stored tasks
      */
-    private static void deleteTask(String taskNumberText, List<Task> tasks) throws IOException {
+    private static void deleteTask(String taskNumberText, List<Task> tasks) {
         if (taskNumberText.isEmpty()) {
             printError("Oh no! Luigi can't-a find that task number.");
             return;
@@ -207,7 +206,7 @@ public class LuigiBot {
      * @param markAsDone whether the selected task should be marked as done
      */
     private static void updateTaskStatus(String taskNumberText, List<Task> tasks,
-                                         boolean markAsDone) throws IOException {
+                                         boolean markAsDone) {
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
@@ -234,31 +233,41 @@ public class LuigiBot {
      * Writes the current task list to the hard disk.
      *
      * @param tasks tasks to save
-     * @throws IOException if the task list cannot be written
      */
-    private static void saveTasks(List<Task> tasks) throws IOException {
-        Files.createDirectories(SAVE_PATH.getParent());
-        List<String> taskData = new ArrayList<>();
-        for (Task task : tasks) {
-            taskData.add(task.toFileString());
+    private static void saveTasks(List<Task> tasks) {
+        try {
+            Files.createDirectories(SAVE_PATH.getParent());
+            List<String> taskData = new ArrayList<>();
+            for (Task task : tasks) {
+                taskData.add(task.toFileString());
+            }
+            Files.write(SAVE_PATH, taskData);
+        } catch (IOException exception) {
+            printError("Mamma mia! Luigi couldn't-a save your tasks.");
         }
-        Files.write(SAVE_PATH, taskData);
     }
 
     /**
      * Loads tasks from the save file, or returns an empty list when no file exists.
      *
      * @return tasks reconstructed from the save file
-     * @throws IOException if the save file cannot be read
      */
-    private static List<Task> loadTasks() throws IOException {
+    private static List<Task> loadTasks() {
         List<Task> tasks = new ArrayList<>();
         if (!Files.exists(SAVE_PATH)) {
             return tasks;
         }
 
-        for (String taskData : Files.readAllLines(SAVE_PATH)) {
-            tasks.add(parseTask(taskData));
+        try {
+            for (String taskData : Files.readAllLines(SAVE_PATH)) {
+                try {
+                    tasks.add(parseTask(taskData));
+                } catch (IllegalArgumentException exception) {
+                    printError("Mamma mia! Luigi skipped-a an invalid saved task.");
+                }
+            }
+        } catch (IOException exception) {
+            printError("Mamma mia! Luigi couldn't-a read the task file.");
         }
         return tasks;
     }
@@ -271,11 +280,30 @@ public class LuigiBot {
      */
     private static Task parseTask(String taskData) {
         String[] fields = taskData.split(" \\| ", -1);
+        if (fields.length < 2 || (!fields[1].equals("0") && !fields[1].equals("1"))) {
+            throw new IllegalArgumentException("Invalid task status");
+        }
+
+        int expectedFieldCount = switch (fields[0]) {
+            case "T" -> 3;
+            case "D" -> 4;
+            case "E" -> 5;
+            default -> throw new IllegalArgumentException("Unknown task type");
+        };
+        if (fields.length != expectedFieldCount) {
+            throw new IllegalArgumentException("Invalid task field count");
+        }
+        for (int i = 2; i < fields.length; i++) {
+            if (fields[i].isBlank()) {
+                throw new IllegalArgumentException("Empty task field");
+            }
+        }
+
         Task task = switch (fields[0]) {
             case "T" -> new Todo(fields[2]);
             case "D" -> new Deadline(fields[2], fields[3]);
             case "E" -> new Event(fields[2], fields[3], fields[4]);
-            default -> throw new IllegalArgumentException("Unknown task type: " + fields[0]);
+            default -> throw new IllegalArgumentException("Unknown task type");
         };
 
         if (fields[1].equals("1")) {

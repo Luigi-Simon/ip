@@ -20,6 +20,7 @@ class TestCase:
     input_text: str
     expected_output: str
     initial_saved_data: str | None
+    initial_save_path: str | None
     expected_saved_data: str | None
 
 
@@ -67,6 +68,7 @@ def parse_test_plan(plan_path: Path) -> list[TestCase]:
                 input_text=extract_block(body, "Input", name),
                 expected_output=extract_block(body, "Expected output", name),
                 initial_saved_data=extract_optional_block(body, "Initial saved data"),
+                initial_save_path=extract_optional_block(body, "Initial save path"),
                 expected_saved_data=extract_optional_block(body, "Expected saved data"),
             )
         )
@@ -125,6 +127,14 @@ def write_initial_saved_data(working_dir: Path, saved_data: str) -> None:
     save_path.write_text(saved_data + "\n", encoding="utf-8")
 
 
+def create_initial_save_path(working_dir: Path, path_type: str) -> None:
+    """Create a special save path used to exercise filesystem failures."""
+    if path_type != "directory":
+        raise ValueError(f"Unsupported initial save path type: {path_type}")
+    save_path = working_dir / "data" / "luigibot.txt"
+    save_path.mkdir(parents=True)
+
+
 def print_transcript(case: TestCase, actual: str) -> None:
     """Print a readable record of console input and output."""
     print(f"\n=== {case.name} ===")
@@ -156,6 +166,8 @@ def main() -> int:
                 working_dir.mkdir()
                 if case.initial_saved_data is not None:
                     write_initial_saved_data(working_dir, case.initial_saved_data)
+                if case.initial_save_path is not None:
+                    create_initial_save_path(working_dir, case.initial_save_path)
                 actual = run_case(working_dir, classes_dir, case)
                 print_transcript(case, actual)
                 if actual != case.expected_output:
