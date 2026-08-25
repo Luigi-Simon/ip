@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -66,8 +67,13 @@ public class LuigiBot {
                     } else if (by.isEmpty()) {
                         printError("Oh no! Luigi needs-a know the deadline! Use /by.");
                     } else {
-                        Deadline deadline = new Deadline(description, by);
-                        addTask(deadline, tasks);
+                        try {
+                            Deadline deadline = new Deadline(description, by);
+                            addTask(deadline, tasks);
+                        } catch (DateTimeParseException exception) {
+                            printError("Mamma mia! Use-a yyyy-MM-dd HHmm "
+                                    + "for the deadline date and time.");
+                        }
                     }
                 }
             } else if (userInput.equals("event") || userInput.startsWith("event ")) {
@@ -262,7 +268,7 @@ public class LuigiBot {
             for (String taskData : Files.readAllLines(SAVE_PATH)) {
                 try {
                     tasks.add(parseTask(taskData));
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | DateTimeParseException exception) {
                     printError("Mamma mia! Luigi skipped-a an invalid saved task.");
                 }
             }

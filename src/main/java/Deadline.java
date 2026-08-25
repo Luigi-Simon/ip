@@ -1,25 +1,29 @@
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.Locale;
 
 /**
  * Represents a task that must be completed by a specific time.
  */
 public class Deadline extends Task {
+    private static final DateTimeFormatter INPUT_FORMAT =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm")
+                    .withResolverStyle(ResolverStyle.STRICT);
     private static final DateTimeFormatter DISPLAY_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
+            DateTimeFormatter.ofPattern("MMM dd uuuu, h:mm a", Locale.ENGLISH);
 
-    private final LocalDate by;
+    private final LocalDateTime by;
 
     /**
-     * Creates an incomplete deadline with the given description and due date.
+     * Creates an incomplete deadline with the given description and due date-time.
      *
      * @param description description of the deadline
-     * @param by date by which the deadline must be completed, in yyyy-MM-dd format
+     * @param by date and time by which the deadline must be completed, in yyyy-MM-dd HHmm format
      */
     public Deadline(String description, String by) {
         super(description);
-        this.by = LocalDate.parse(by);
+        this.by = LocalDateTime.parse(by, INPUT_FORMAT);
     }
 
     /**
@@ -40,6 +44,6 @@ public class Deadline extends Task {
      */
     @Override
     public String toFileString() {
-        return getFileString("D") + " | " + this.by;
+        return getFileString("D") + " | " + this.by.format(INPUT_FORMAT);
     }
 }
