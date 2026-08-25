@@ -100,8 +100,14 @@ public class LuigiBot {
                     } else if (from.isEmpty() || to.isEmpty()) {
                         printError("Mamma mia! Use: event DESCRIPTION /from START /to END.");
                     } else {
-                        Event event = new Event(description, from, to);
-                        addTask(event, tasks);
+                        try {
+                            Event event = new Event(description, from, to);
+                            addTask(event, tasks);
+                        } catch (DateTimeParseException exception) {
+                            printError("Mamma mia! Use-a yyyy-MM-dd HHmm for both Event times.");
+                        } catch (IllegalArgumentException exception) {
+                            printError("Mamma mia! The Event must-a end after it starts.");
+                        }
                     }
                 }
             } else {

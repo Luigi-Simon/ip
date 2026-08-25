@@ -569,6 +569,61 @@ Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
 ```
 
+## Test case: Reject invalid Event date-times and ranges
+
+**Aim:** Verify that invalid Event date-times and non-positive time ranges are rejected without changing the task list.
+
+### Input
+
+```text
+event impossible date /from 2019-02-29 1400 /to 2019-03-01 1600
+event project meeting /from 2019-12-02 1400 /to 2019-12-02 1600
+event invalid hour /from 2019-12-03 2500 /to 2019-12-03 2600
+event reverse meeting /from 2019-12-04 1600 /to 2019-12-04 1400
+event zero meeting /from 2019-12-05 1400 /to 2019-12-05 1400
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Use-a yyyy-MM-dd HHmm for both Event times.
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Use-a yyyy-MM-dd HHmm for both Event times.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! The Event must-a end after it starts.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! The Event must-a end after it starts.
+____________________________________________________________
+____________________________________________________________
+Let's-a see what Luigi has on the list:
+1.[E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
 ## Test case: Invalid task creation preserves numbering
 
 **Aim:** Verify that rejected task commands do not change the task count or occupy list positions.

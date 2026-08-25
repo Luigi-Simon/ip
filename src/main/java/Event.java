@@ -25,8 +25,13 @@ public class Event extends Task {
      */
     public Event(String description, String from, String to) {
         super(description);
-        this.from = LocalDateTime.parse(from, INPUT_FORMAT);
-        this.to = LocalDateTime.parse(to, INPUT_FORMAT);
+        LocalDateTime parsedFrom = LocalDateTime.parse(from, INPUT_FORMAT);
+        LocalDateTime parsedTo = LocalDateTime.parse(to, INPUT_FORMAT);
+        if (!parsedTo.isAfter(parsedFrom)) {
+            throw new IllegalArgumentException("Event end must be after its start");
+        }
+        this.from = parsedFrom;
+        this.to = parsedTo;
     }
 
     /**
