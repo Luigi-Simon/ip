@@ -15,12 +15,10 @@ public class LuigiBot {
 
         TaskList tasks = new TaskList(storage.load(ui));
 
-        while (true) {
+        boolean isExit = false;
+        while (!isExit) {
             String userInput = ui.readCommand();
 
-            if (userInput.equals("bye")) {
-                break;
-            }
             if (userInput.isBlank()) {
                 ui.showError("Mamma mia! You didn't-a enter a command.");
             } else {
@@ -50,6 +48,14 @@ public class LuigiBot {
                             new AddCommand(parser.parseDeadline(arguments)), tasks, storage, ui);
                     case "event" -> executeCommand(
                             new AddCommand(parser.parseEvent(arguments)), tasks, storage, ui);
+                    case "bye" -> {
+                        if (userInput.equals("bye")) {
+                            isExit = executeCommand(
+                                    new ExitCommand(), tasks, storage, ui);
+                        } else {
+                            ui.showError("Oh no! Luigi doesn't-a recognize that command.");
+                        }
+                    }
                     default -> ui.showError("Oh no! Luigi doesn't-a recognize that command.");
                     }
                 } catch (IllegalArgumentException exception) {
@@ -59,7 +65,6 @@ public class LuigiBot {
         }
 
         ui.close();
-        ui.showGoodbye();
     }
 
     /**
@@ -69,10 +74,12 @@ public class LuigiBot {
      * @param tasks stored tasks
      * @param storage storage used to persist task changes
      * @param ui user interface used to display results
+     * @return true when the command requests that LuigiBot exit
      */
-    private static void executeCommand(Command command, TaskList tasks,
-                                       Storage storage, Ui ui) {
+    private static boolean executeCommand(Command command, TaskList tasks,
+                                          Storage storage, Ui ui) {
         command.execute(tasks, ui, storage);
+        return command.isExit();
     }
 
     /**
