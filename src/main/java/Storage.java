@@ -26,11 +26,11 @@ public class Storage {
      * @param tasks tasks to save
      * @param ui user interface used to report save failures
      */
-    public void save(List<Task> tasks, Ui ui) {
+    public void save(TaskList tasks, Ui ui) {
         try {
             Files.createDirectories(this.savePath.getParent());
             List<String> taskData = new ArrayList<>();
-            for (Task task : tasks) {
+            for (Task task : tasks.getTasks()) {
                 taskData.add(task.toFileString());
             }
             Files.write(this.savePath, taskData);

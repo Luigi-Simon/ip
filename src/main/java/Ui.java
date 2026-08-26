@@ -131,11 +131,11 @@ public class Ui {
      *
      * @param tasks stored tasks
      */
-    public void showTaskList(List<Task> tasks) {
+    public void showTaskList(TaskList tasks) {
         System.out.println(LINE);
         System.out.println("Let's-a see what Luigi has on the list:");
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + "." + tasks.get(i));
+            System.out.println((i + 1) + "." + tasks.getTasks().get(i));
         }
         System.out.println(LINE);
     }
@@ -147,7 +147,7 @@ public class Ui {
      * @param tasks stored tasks
      * @param matchingIndexes indexes of tasks occurring on the date
      */
-    public void showTasksOnDate(LocalDate date, List<Task> tasks,
+    public void showTasksOnDate(LocalDate date, TaskList tasks,
                                 List<Integer> matchingIndexes) {
         System.out.println(LINE);
         if (matchingIndexes.isEmpty()) {
@@ -157,7 +157,7 @@ public class Ui {
             System.out.println("Luigi found-a these tasks on "
                     + date.format(DATE_DISPLAY_FORMAT) + ":");
             for (int index : matchingIndexes) {
-                System.out.println((index + 1) + "." + tasks.get(index));
+                System.out.println((index + 1) + "." + tasks.getTasks().get(index));
             }
         }
         System.out.println(LINE);

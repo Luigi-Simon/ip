@@ -2,7 +2,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +22,7 @@ public class LuigiBot {
         Storage storage = new Storage("data/luigibot.txt");
         ui.showGreeting();
 
-        List<Task> tasks = storage.load(ui);
+        TaskList tasks = new TaskList(storage.load(ui));
 
         while (true) {
             String userInput = ui.readCommand();
@@ -127,7 +126,7 @@ public class LuigiBot {
      * @param task task to add
      * @param tasks list containing the stored tasks
      */
-    private static void addTask(Task task, List<Task> tasks, Storage storage, Ui ui) {
+    private static void addTask(Task task, TaskList tasks, Storage storage, Ui ui) {
         tasks.add(task);
         storage.save(tasks, ui);
         ui.showTaskAdded(task, tasks.size());
@@ -139,7 +138,7 @@ public class LuigiBot {
      * @param taskNumberText user-provided task number
      * @param tasks list containing the stored tasks
      */
-    private static void deleteTask(String taskNumberText, List<Task> tasks,
+    private static void deleteTask(String taskNumberText, TaskList tasks,
                                    Storage storage, Ui ui) {
         if (taskNumberText.isEmpty()) {
             ui.showError("Oh no! Luigi can't-a find that task number.");
@@ -148,12 +147,12 @@ public class LuigiBot {
 
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
-            if (taskNumber < 1 || taskNumber > tasks.size()) {
+            if (!tasks.isValidTaskNumber(taskNumber)) {
                 ui.showError("Oh no! Luigi can't-a find that task number.");
                 return;
             }
 
-            Task removedTask = tasks.remove(taskNumber - 1);
+            Task removedTask = tasks.delete(taskNumber);
             storage.save(tasks, ui);
             ui.showTaskDeleted(removedTask, tasks.size());
         } catch (NumberFormatException exception) {
@@ -168,22 +167,22 @@ public class LuigiBot {
      * @param tasks stored tasks
      * @param markAsDone whether the selected task should be marked as done
      */
-    private static void updateTaskStatus(String taskNumberText, List<Task> tasks,
+    private static void updateTaskStatus(String taskNumberText, TaskList tasks,
                                          boolean markAsDone, Storage storage, Ui ui) {
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
-            if (taskNumber < 1 || taskNumber > tasks.size()) {
+            if (!tasks.isValidTaskNumber(taskNumber)) {
                 ui.showError("Oh no! Luigi can't-a find that task number.");
                 return;
             }
 
-            Task task = tasks.get(taskNumber - 1);
+            Task task;
             if (markAsDone) {
-                task.mark();
+                task = tasks.mark(taskNumber);
                 storage.save(tasks, ui);
                 ui.showTaskMarked(task);
             } else {
-                task.unmark();
+                task = tasks.unmark(taskNumber);
                 storage.save(tasks, ui);
                 ui.showTaskUnmarked(task);
             }
@@ -198,7 +197,7 @@ public class LuigiBot {
      * @param dateText user-provided date in yyyy-MM-dd format
      * @param tasks stored tasks
      */
-    private static void printTasksOnDate(String dateText, List<Task> tasks, Ui ui) {
+    private static void printTasksOnDate(String dateText, TaskList tasks, Ui ui) {
         if (dateText.isEmpty()) {
             ui.showError("Mamma mia! Luigi needs-a date. Use: on yyyy-MM-dd.");
             return;
@@ -206,12 +205,7 @@ public class LuigiBot {
 
         try {
             LocalDate date = LocalDate.parse(dateText, DATE_INPUT_FORMAT);
-            List<Integer> matchingIndexes = new ArrayList<>();
-            for (int i = 0; i < tasks.size(); i++) {
-                if (tasks.get(i).occursOn(date)) {
-                    matchingIndexes.add(i);
-                }
-            }
+            List<Integer> matchingIndexes = tasks.findIndexesOnDate(date);
 
             ui.showTasksOnDate(date, tasks, matchingIndexes);
         } catch (DateTimeParseException exception) {
