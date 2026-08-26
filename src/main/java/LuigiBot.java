@@ -32,10 +32,12 @@ public class LuigiBot {
                 try {
                     switch (commandWord) {
                     case "delete" -> deleteTask(arguments, tasks, storage, ui, parser);
-                    case "unmark" -> updateTaskStatus(
-                            arguments, tasks, false, storage, ui, parser);
-                    case "mark" -> updateTaskStatus(
-                            arguments, tasks, true, storage, ui, parser);
+                    case "unmark" -> executeCommand(
+                            new UnmarkCommand(parser.parseTaskNumber(arguments)),
+                            tasks, storage, ui);
+                    case "mark" -> executeCommand(
+                            new MarkCommand(parser.parseTaskNumber(arguments)),
+                            tasks, storage, ui);
                     case "list" -> {
                         if (userInput.equals("list")) {
                             executeCommand(new ListCommand(), tasks, storage, ui);
@@ -90,34 +92,6 @@ public class LuigiBot {
 
         int taskNumber = parser.parseTaskNumber(taskNumberText);
         executeCommand(new DeleteCommand(taskNumber), tasks, storage, ui);
-    }
-
-    /**
-     * Validates a task number and updates the selected task's completion status.
-     *
-     * @param taskNumberText user-provided task number
-     * @param tasks stored tasks
-     * @param markAsDone whether the selected task should be marked as done
-     */
-    private static void updateTaskStatus(String taskNumberText, TaskList tasks,
-                                         boolean markAsDone, Storage storage, Ui ui,
-                                         Parser parser) {
-        int taskNumber = parser.parseTaskNumber(taskNumberText);
-        if (!tasks.isValidTaskNumber(taskNumber)) {
-            ui.showError("Oh no! Luigi can't-a find that task number.");
-            return;
-        }
-
-        Task task;
-        if (markAsDone) {
-            task = tasks.mark(taskNumber);
-            storage.save(tasks, ui);
-            ui.showTaskMarked(task);
-        } else {
-            task = tasks.unmark(taskNumber);
-            storage.save(tasks, ui);
-            ui.showTaskUnmarked(task);
-        }
     }
 
     /**
