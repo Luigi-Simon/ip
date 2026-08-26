@@ -1,18 +1,30 @@
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
+import java.util.Locale;
+
 /**
  * Represents a task that must be completed by a specific time.
  */
 public class Deadline extends Task {
-    private final String by;
+    private static final DateTimeFormatter INPUT_FORMAT =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm")
+                    .withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter DISPLAY_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd uuuu, h:mm a", Locale.ENGLISH);
+
+    private final LocalDateTime by;
 
     /**
-     * Creates an incomplete deadline with the given description and due time.
+     * Creates an incomplete deadline with the given description and due date-time.
      *
      * @param description description of the deadline
-     * @param by time by which the deadline must be completed
+     * @param by date and time by which the deadline must be completed, in yyyy-MM-dd HHmm format
      */
     public Deadline(String description, String by) {
         super(description);
-        this.by = by;
+        this.by = LocalDateTime.parse(by, INPUT_FORMAT);
     }
 
     /**
@@ -22,7 +34,8 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + this.by + ")";
+        return "[D]" + super.toString()
+                + " (by: " + this.by.format(DISPLAY_FORMAT) + ")";
     }
 
     /**
@@ -32,6 +45,17 @@ public class Deadline extends Task {
      */
     @Override
     public String toFileString() {
-        return getFileString("D") + " | " + this.by;
+        return getFileString("D") + " | " + this.by.format(INPUT_FORMAT);
+    }
+
+    /**
+     * Returns whether this deadline is due on the given date.
+     *
+     * @param date date to check
+     * @return true when the deadline is due on the given date
+     */
+    @Override
+    public boolean occursOn(LocalDate date) {
+        return this.by.toLocalDate().equals(date);
     }
 }

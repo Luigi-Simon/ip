@@ -1,8 +1,13 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 /**
@@ -12,6 +17,11 @@ public class LuigiBot {
     // Constant line for easy printing
     private static final String LINE = "____________________________________________________________";
     private static final Path SAVE_PATH = Path.of("data", "luigibot.txt");
+    private static final DateTimeFormatter DATE_INPUT_FORMAT =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd")
+                    .withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter DATE_DISPLAY_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
 
     /**
      * Starts LuigiBot and processes commands until the user exits.
@@ -40,6 +50,8 @@ public class LuigiBot {
                 updateTaskStatus(userInput.substring(4).trim(), tasks, true);
             } else if (userInput.equals("list")) {
                 printTaskList(tasks);
+            } else if (userInput.equals("on") || userInput.startsWith("on ")) {
+                printTasksOnDate(userInput.substring(2).trim(), tasks);
             } else if (userInput.equals("todo") || userInput.startsWith("todo ")) {
                 String description = userInput.substring(4).trim();
                 if (description.isEmpty()) {
@@ -66,8 +78,13 @@ public class LuigiBot {
                     } else if (by.isEmpty()) {
                         printError("Oh no! Luigi needs-a know the deadline! Use /by.");
                     } else {
-                        Deadline deadline = new Deadline(description, by);
-                        addTask(deadline, tasks);
+                        try {
+                            Deadline deadline = new Deadline(description, by);
+                            addTask(deadline, tasks);
+                        } catch (DateTimeParseException exception) {
+                            printError("Mamma mia! Use-a yyyy-MM-dd HHmm "
+                                    + "for the deadline date and time.");
+                        }
                     }
                 }
             } else if (userInput.equals("event") || userInput.startsWith("event ")) {
@@ -94,8 +111,14 @@ public class LuigiBot {
                     } else if (from.isEmpty() || to.isEmpty()) {
                         printError("Mamma mia! Use: event DESCRIPTION /from START /to END.");
                     } else {
-                        Event event = new Event(description, from, to);
-                        addTask(event, tasks);
+                        try {
+                            Event event = new Event(description, from, to);
+                            addTask(event, tasks);
+                        } catch (DateTimeParseException exception) {
+                            printError("Mamma mia! Use-a yyyy-MM-dd HHmm for both Event times.");
+                        } catch (IllegalArgumentException exception) {
+                            printError("Mamma mia! The Event must-a end after it starts.");
+                        }
                     }
                 }
             } else {
@@ -262,7 +285,7 @@ public class LuigiBot {
             for (String taskData : Files.readAllLines(SAVE_PATH)) {
                 try {
                     tasks.add(parseTask(taskData));
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException | DateTimeParseException exception) {
                     printError("Mamma mia! Luigi skipped-a an invalid saved task.");
                 }
             }
@@ -324,6 +347,44 @@ public class LuigiBot {
             System.out.println((i + 1) + "." + tasks.get(i));
         }
         System.out.println(LINE);
+    }
+
+    /**
+     * Parses a date and prints all dated tasks that occur on it.
+     *
+     * @param dateText user-provided date in yyyy-MM-dd format
+     * @param tasks stored tasks
+     */
+    private static void printTasksOnDate(String dateText, List<Task> tasks) {
+        if (dateText.isEmpty()) {
+            printError("Mamma mia! Luigi needs-a date. Use: on yyyy-MM-dd.");
+            return;
+        }
+
+        try {
+            LocalDate date = LocalDate.parse(dateText, DATE_INPUT_FORMAT);
+            List<Integer> matchingIndexes = new ArrayList<>();
+            for (int i = 0; i < tasks.size(); i++) {
+                if (tasks.get(i).occursOn(date)) {
+                    matchingIndexes.add(i);
+                }
+            }
+
+            System.out.println(LINE);
+            if (matchingIndexes.isEmpty()) {
+                System.out.println("Mamma mia! Luigi found-a no tasks on "
+                        + date.format(DATE_DISPLAY_FORMAT) + ".");
+            } else {
+                System.out.println("Luigi found-a these tasks on "
+                        + date.format(DATE_DISPLAY_FORMAT) + ":");
+                for (int index : matchingIndexes) {
+                    System.out.println((index + 1) + "." + tasks.get(index));
+                }
+            }
+            System.out.println(LINE);
+        } catch (DateTimeParseException exception) {
+            printError("Mamma mia! Use-a yyyy-MM-dd for the date.");
+        }
     }
 
     /**

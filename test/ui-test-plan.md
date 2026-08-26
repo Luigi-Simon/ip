@@ -50,9 +50,9 @@ ____________________________________________________________
 ```text
 T | 1 | read book
 Z | 0 | mystery task
-D | 0 | return book | Sunday
+D | 0 | return book | 2019-12-02 1800
 T | 2 | invalid status
-E | 1 | project meeting | Mon 2pm | 4pm
+E | 1 | project meeting | 2019-12-02 1400 | 2019-12-02 1600
 D | 0 | missing deadline
 T | 0 |
 E | 0 | extra event | Monday | Tuesday | extra field
@@ -98,8 +98,8 @@ ____________________________________________________________
 ____________________________________________________________
 Let's-a see what Luigi has on the list:
 1.[T][X] read book
-2.[D][ ] return book (by: Sunday)
-3.[E][X] project meeting (from: Mon 2pm to: 4pm)
+2.[D][ ] return book (by: Dec 02 2019, 6:00 PM)
+3.[E][X] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
@@ -114,19 +114,19 @@ ____________________________________________________________
 
 ```text
 T | 1 | read book
-D | 0 | return book | Sunday
-E | 1 | project meeting | Mon 2pm | 4pm
+D | 0 | return book | 2019-12-02 1800
+E | 1 | project meeting | 2019-12-02 1400 | 2019-12-02 1600
 T | 0 | borrow book
 ```
 
 ## Test case: Add and list a Deadline
 
-**Aim:** Verify that LuigiBot stores and displays a Deadline with its `/by` value.
+**Aim:** Verify that LuigiBot parses, stores, and formats a Deadline date and time.
 
 ### Input
 
 ```text
-deadline return book /by Sunday
+deadline return book /by 2019-12-02 1800
 list
 bye
 ```
@@ -147,12 +147,67 @@ What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 02 2019, 6:00 PM)
 You've-a got 1 tasks now!
 ____________________________________________________________
 ____________________________________________________________
 Let's-a see what Luigi has on the list:
-1.[D][ ] return book (by: Sunday)
+1.[D][ ] return book (by: Dec 02 2019, 6:00 PM)
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
+## Test case: Reject invalid Deadline dates and times
+
+**Aim:** Verify that invalid Deadline date-times are rejected without changing the task list.
+
+### Input
+
+```text
+deadline impossible date /by 2019-02-30 1800
+deadline return book /by 2019-12-02 1800
+deadline impossible time /by 2019-12-02 2500
+deadline missing time /by 2019-12-02
+deadline wrong format /by tomorrow
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Use-a yyyy-MM-dd HHmm for the deadline date and time.
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [D][ ] return book (by: Dec 02 2019, 6:00 PM)
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Use-a yyyy-MM-dd HHmm for the deadline date and time.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Use-a yyyy-MM-dd HHmm for the deadline date and time.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Use-a yyyy-MM-dd HHmm for the deadline date and time.
+____________________________________________________________
+____________________________________________________________
+Let's-a see what Luigi has on the list:
+1.[D][ ] return book (by: Dec 02 2019, 6:00 PM)
 ____________________________________________________________
 Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
@@ -160,12 +215,12 @@ ____________________________________________________________
 
 ## Test case: Mark and unmark an Event
 
-**Aim:** Verify that LuigiBot adds an Event and updates its status when marked and unmarked.
+**Aim:** Verify that LuigiBot parses and formats Event date-times while preserving status updates.
 
 ### Input
 
 ```text
-event project meeting /from Mon 2pm /to 4pm
+event project meeting /from 2019-12-02 1400 /to 2019-12-02 1600
 mark 1
 list
 unmark 1
@@ -188,20 +243,20 @@ What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 You've-a got 1 tasks now!
 ____________________________________________________________
 ____________________________________________________________
 Nice-a! Luigi marked this task as done:
-  [E][X] project meeting (from: Mon 2pm to: 4pm)
+  [E][X] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 Let's-a see what Luigi has on the list:
-1.[E][X] project meeting (from: Mon 2pm to: 4pm)
+1.[E][X] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 No problem! Luigi marked this task as not done:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
@@ -366,7 +421,7 @@ ____________________________________________________________
 
 ```text
 todo
-deadline /by Sunday
+deadline /by 2019-12-02 1800
 bye
 ```
 
@@ -437,7 +492,7 @@ ____________________________________________________________
 ### Input
 
 ```text
-event /from Mon 2pm /to 4pm
+event /from 2019-12-02 1400 /to 2019-12-02 1600
 bye
 ```
 
@@ -514,6 +569,125 @@ Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
 ```
 
+## Test case: Reject invalid Event date-times and ranges
+
+**Aim:** Verify that invalid Event date-times and non-positive time ranges are rejected without changing the task list.
+
+### Input
+
+```text
+event impossible date /from 2019-02-29 1400 /to 2019-03-01 1600
+event project meeting /from 2019-12-02 1400 /to 2019-12-02 1600
+event invalid hour /from 2019-12-03 2500 /to 2019-12-03 2600
+event reverse meeting /from 2019-12-04 1600 /to 2019-12-04 1400
+event zero meeting /from 2019-12-05 1400 /to 2019-12-05 1400
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Use-a yyyy-MM-dd HHmm for both Event times.
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Use-a yyyy-MM-dd HHmm for both Event times.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! The Event must-a end after it starts.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! The Event must-a end after it starts.
+____________________________________________________________
+____________________________________________________________
+Let's-a see what Luigi has on the list:
+1.[E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
+## Test case: Find dated tasks on a specific date
+
+**Aim:** Verify that the `on` command finds Deadlines and Events occurring on a date while excluding Todos.
+
+### Input
+
+```text
+todo buy snacks
+deadline submit report /by 2019-12-02 1800
+event overnight meeting /from 2019-12-01 2300 /to 2019-12-02 0100
+on
+on 2019-12-02
+on 2019-12-03
+on 2019-02-29
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [T][ ] buy snacks
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [D][ ] submit report (by: Dec 02 2019, 6:00 PM)
+You've-a got 2 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [E][ ] overnight meeting (from: Dec 01 2019, 11:00 PM to: Dec 02 2019, 1:00 AM)
+You've-a got 3 tasks now!
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi needs-a date. Use: on yyyy-MM-dd.
+____________________________________________________________
+____________________________________________________________
+Luigi found-a these tasks on Dec 02 2019:
+2.[D][ ] submit report (by: Dec 02 2019, 6:00 PM)
+3.[E][ ] overnight meeting (from: Dec 01 2019, 11:00 PM to: Dec 02 2019, 1:00 AM)
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi found-a no tasks on Dec 03 2019.
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Use-a yyyy-MM-dd for the date.
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
 ## Test case: Invalid task creation preserves numbering
 
 **Aim:** Verify that rejected task commands do not change the task count or occupy list positions.
@@ -523,9 +697,9 @@ ____________________________________________________________
 ```text
 todo read book
 deadline return book
-deadline return book /by Friday
+deadline return book /by 2019-12-06 1800
 event meeting /from 2pm
-event meeting /from 2pm /to 3pm
+event meeting /from 2019-12-02 1400 /to 2019-12-02 1600
 todo
 list
 bye
@@ -555,7 +729,7 @@ Oh no! Luigi needs-a know the deadline! Use /by.
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [D][ ] return book (by: Friday)
+  [D][ ] return book (by: Dec 06 2019, 6:00 PM)
 You've-a got 2 tasks now!
 ____________________________________________________________
 ____________________________________________________________
@@ -563,7 +737,7 @@ Mamma mia! Use: event DESCRIPTION /from START /to END.
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [E][ ] meeting (from: 2pm to: 3pm)
+  [E][ ] meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 You've-a got 3 tasks now!
 ____________________________________________________________
 ____________________________________________________________
@@ -572,8 +746,8 @@ ____________________________________________________________
 ____________________________________________________________
 Let's-a see what Luigi has on the list:
 1.[T][ ] read book
-2.[D][ ] return book (by: Friday)
-3.[E][ ] meeting (from: 2pm to: 3pm)
+2.[D][ ] return book (by: Dec 06 2019, 6:00 PM)
+3.[E][ ] meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
@@ -721,8 +895,8 @@ ____________________________________________________________
 
 ```text
 todo read book
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+deadline return book /by 2019-12-02 1800
+event project meeting /from 2019-12-02 1400 /to 2019-12-02 1600
 delete 2
 delete
 delete abc
@@ -754,17 +928,17 @@ You've-a got 1 tasks now!
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 02 2019, 6:00 PM)
 You've-a got 2 tasks now!
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 You've-a got 3 tasks now!
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi removed this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 02 2019, 6:00 PM)
 You've-a got 2 tasks now!
 ____________________________________________________________
 ____________________________________________________________
@@ -779,11 +953,11 @@ ____________________________________________________________
 ____________________________________________________________
 Let's-a see what Luigi has on the list:
 1.[T][ ] read book
-2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+2.[E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi removed this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 You've-a got 1 tasks now!
 ____________________________________________________________
 ____________________________________________________________
@@ -1441,8 +1615,8 @@ ____________________________________________________________
 
 ```text
 todo read book
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+deadline return book /by 2019-12-02 1800
+event project meeting /from 2019-12-02 1400 /to 2019-12-02 1600
 mark 1
 delete 2
 bye
@@ -1469,12 +1643,12 @@ You've-a got 1 tasks now!
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 02 2019, 6:00 PM)
 You've-a got 2 tasks now!
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 You've-a got 3 tasks now!
 ____________________________________________________________
 ____________________________________________________________
@@ -1483,7 +1657,7 @@ Nice-a! Luigi marked this task as done:
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi removed this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 02 2019, 6:00 PM)
 You've-a got 2 tasks now!
 ____________________________________________________________
 Mama mia! Leaving already? Cya soon!
@@ -1494,7 +1668,7 @@ ____________________________________________________________
 
 ```text
 T | 1 | read book
-E | 0 | project meeting | Mon 2pm | 4pm
+E | 0 | project meeting | 2019-12-02 1400 | 2019-12-02 1600
 ```
 
 ## Test case: Load and update saved tasks
@@ -1505,8 +1679,8 @@ E | 0 | project meeting | Mon 2pm | 4pm
 
 ```text
 T | 1 | read book
-D | 0 | return book | Sunday
-E | 1 | project meeting | Mon 2pm | 4pm
+D | 0 | return book | 2019-12-02 1800
+E | 1 | project meeting | 2019-12-02 1400 | 2019-12-02 1600
 ```
 
 ### Input
@@ -1536,16 +1710,16 @@ ____________________________________________________________
 ____________________________________________________________
 Let's-a see what Luigi has on the list:
 1.[T][X] read book
-2.[D][ ] return book (by: Sunday)
-3.[E][X] project meeting (from: Mon 2pm to: 4pm)
+2.[D][ ] return book (by: Dec 02 2019, 6:00 PM)
+3.[E][X] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 No problem! Luigi marked this task as not done:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 Okie-dokie! Luigi removed this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 02 2019, 6:00 PM)
 You've-a got 2 tasks now!
 ____________________________________________________________
 ____________________________________________________________
@@ -1561,7 +1735,7 @@ ____________________________________________________________
 
 ```text
 T | 1 | read book
-E | 0 | project meeting | Mon 2pm | 4pm
+E | 0 | project meeting | 2019-12-02 1400 | 2019-12-02 1600
 T | 0 | borrow book
 ```
 
