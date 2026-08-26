@@ -4,7 +4,7 @@ import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 
 /**
- * Parses user commands and converts their arguments into domain objects.
+ * Parses user input and creates executable commands.
  */
 public class Parser {
     private static final DateTimeFormatter DATE_INPUT_FORMAT =
@@ -23,6 +23,45 @@ public class Parser {
             "Mamma mia! Use-a yyyy-MM-dd HHmm for both Event times.";
     private static final String EVENT_RANGE_ERROR =
             "Mamma mia! The Event must-a end after it starts.";
+    private static final String EMPTY_COMMAND_ERROR =
+            "Mamma mia! You didn't-a enter a command.";
+    private static final String UNKNOWN_COMMAND_ERROR =
+            "Oh no! Luigi doesn't-a recognize that command.";
+    private static final String TASK_NOT_FOUND_ERROR =
+            "Oh no! Luigi can't-a find that task number.";
+
+    /**
+     * Parses full user input and creates the corresponding command.
+     *
+     * @param userInput full user input
+     * @return command represented by the user input
+     */
+    public Command parse(String userInput) {
+        if (userInput.isBlank()) {
+            throw new IllegalArgumentException(EMPTY_COMMAND_ERROR);
+        }
+
+        String commandWord = getCommandWord(userInput);
+        String arguments = getArguments(userInput);
+        return switch (commandWord) {
+        case "delete" -> parseDeleteCommand(arguments);
+        case "unmark" -> new UnmarkCommand(parseTaskNumber(arguments));
+        case "mark" -> new MarkCommand(parseTaskNumber(arguments));
+        case "list" -> {
+            validateExactCommand(userInput, "list");
+            yield new ListCommand();
+        }
+        case "on" -> new FindCommand(parseDate(arguments));
+        case "todo" -> new AddCommand(parseTodo(arguments));
+        case "deadline" -> new AddCommand(parseDeadline(arguments));
+        case "event" -> new AddCommand(parseEvent(arguments));
+        case "bye" -> {
+            validateExactCommand(userInput, "bye");
+            yield new ExitCommand();
+        }
+        default -> throw new IllegalArgumentException(UNKNOWN_COMMAND_ERROR);
+        };
+    }
 
     /**
      * Returns the command word before the first space.
@@ -30,7 +69,7 @@ public class Parser {
      * @param userInput full user input
      * @return command word
      */
-    public String getCommandWord(String userInput) {
+    private String getCommandWord(String userInput) {
         int firstSpaceIndex = userInput.indexOf(' ');
         if (firstSpaceIndex < 0) {
             return userInput;
@@ -44,7 +83,7 @@ public class Parser {
      * @param userInput full user input
      * @return command arguments, or an empty string when none were supplied
      */
-    public String getArguments(String userInput) {
+    private String getArguments(String userInput) {
         int firstSpaceIndex = userInput.indexOf(' ');
         if (firstSpaceIndex < 0) {
             return "";
@@ -58,7 +97,7 @@ public class Parser {
      * @param arguments Todo description
      * @return parsed Todo
      */
-    public Todo parseTodo(String arguments) {
+    private Todo parseTodo(String arguments) {
         if (arguments.isEmpty()) {
             throw new IllegalArgumentException(EMPTY_DESCRIPTION_ERROR);
         }
@@ -71,7 +110,7 @@ public class Parser {
      * @param arguments Deadline description and /by value
      * @return parsed Deadline
      */
-    public Deadline parseDeadline(String arguments) {
+    private Deadline parseDeadline(String arguments) {
         int byIndex = arguments.indexOf("/by");
         if (!hasMarker(arguments, byIndex, 3)) {
             throw new IllegalArgumentException(DEADLINE_DETAILS_ERROR);
@@ -99,7 +138,7 @@ public class Parser {
      * @param arguments Event description, /from value, and /to value
      * @return parsed Event
      */
-    public Event parseEvent(String arguments) {
+    private Event parseEvent(String arguments) {
         int fromIndex = arguments.indexOf("/from");
         int toIndex = arguments.indexOf("/to");
         boolean hasFromMarker = hasMarker(arguments, fromIndex, 5);
@@ -133,7 +172,7 @@ public class Parser {
      * @param taskNumberText task number entered by the user
      * @return parsed task number
      */
-    public int parseTaskNumber(String taskNumberText) {
+    private int parseTaskNumber(String taskNumberText) {
         try {
             return Integer.parseInt(taskNumberText);
         } catch (NumberFormatException exception) {
@@ -148,7 +187,7 @@ public class Parser {
      * @param dateText date entered by the user
      * @return parsed date
      */
-    public LocalDate parseDate(String dateText) {
+    private LocalDate parseDate(String dateText) {
         if (dateText.isEmpty()) {
             throw new IllegalArgumentException(
                     "Mamma mia! Luigi needs-a date. Use: on yyyy-MM-dd.");
@@ -175,5 +214,30 @@ public class Parser {
                 && (markerIndex == 0 || Character.isWhitespace(text.charAt(markerIndex - 1)))
                 && (markerIndex + markerLength == text.length()
                 || Character.isWhitespace(text.charAt(markerIndex + markerLength)));
+    }
+
+    /**
+     * Parses a DeleteCommand while preserving its missing-number error message.
+     *
+     * @param arguments task number text
+     * @return parsed DeleteCommand
+     */
+    private DeleteCommand parseDeleteCommand(String arguments) {
+        if (arguments.isEmpty()) {
+            throw new IllegalArgumentException(TASK_NOT_FOUND_ERROR);
+        }
+        return new DeleteCommand(parseTaskNumber(arguments));
+    }
+
+    /**
+     * Validates a command that does not accept arguments.
+     *
+     * @param userInput full user input
+     * @param expectedCommand expected exact command
+     */
+    private void validateExactCommand(String userInput, String expectedCommand) {
+        if (!userInput.equals(expectedCommand)) {
+            throw new IllegalArgumentException(UNKNOWN_COMMAND_ERROR);
+        }
     }
 }
