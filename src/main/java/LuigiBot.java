@@ -38,17 +38,18 @@ public class LuigiBot {
                             arguments, tasks, true, storage, ui, parser);
                     case "list" -> {
                         if (userInput.equals("list")) {
-                            Command command = new ListCommand();
-                            command.execute(tasks, ui, storage);
+                            executeCommand(new ListCommand(), tasks, storage, ui);
                         } else {
                             ui.showError("Oh no! Luigi doesn't-a recognize that command.");
                         }
                     }
                     case "on" -> printTasksOnDate(arguments, tasks, ui, parser);
-                    case "todo" -> addTask(parser.parseTodo(arguments), tasks, storage, ui);
-                    case "deadline" -> addTask(
-                            parser.parseDeadline(arguments), tasks, storage, ui);
-                    case "event" -> addTask(parser.parseEvent(arguments), tasks, storage, ui);
+                    case "todo" -> executeCommand(
+                            new AddCommand(parser.parseTodo(arguments)), tasks, storage, ui);
+                    case "deadline" -> executeCommand(
+                            new AddCommand(parser.parseDeadline(arguments)), tasks, storage, ui);
+                    case "event" -> executeCommand(
+                            new AddCommand(parser.parseEvent(arguments)), tasks, storage, ui);
                     default -> ui.showError("Oh no! Luigi doesn't-a recognize that command.");
                     }
                 } catch (IllegalArgumentException exception) {
@@ -62,15 +63,16 @@ public class LuigiBot {
     }
 
     /**
-     * Adds a task to the task list and prints a confirmation.
+     * Executes a command using LuigiBot's application components.
      *
-     * @param task task to add
-     * @param tasks list containing the stored tasks
+     * @param command command to execute
+     * @param tasks stored tasks
+     * @param storage storage used to persist task changes
+     * @param ui user interface used to display results
      */
-    private static void addTask(Task task, TaskList tasks, Storage storage, Ui ui) {
-        tasks.add(task);
-        storage.save(tasks, ui);
-        ui.showTaskAdded(task, tasks.size());
+    private static void executeCommand(Command command, TaskList tasks,
+                                       Storage storage, Ui ui) {
+        command.execute(tasks, ui, storage);
     }
 
     /**
