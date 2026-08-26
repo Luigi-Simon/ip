@@ -7,21 +7,15 @@ import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
 
 /**
  * Runs LuigiBot's command-line task manager.
  */
 public class LuigiBot {
-    // Constant line for easy printing
-    private static final String LINE = "____________________________________________________________";
     private static final Path SAVE_PATH = Path.of("data", "luigibot.txt");
     private static final DateTimeFormatter DATE_INPUT_FORMAT =
             DateTimeFormatter.ofPattern("uuuu-MM-dd")
                     .withResolverStyle(ResolverStyle.STRICT);
-    private static final DateTimeFormatter DATE_DISPLAY_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
 
     /**
      * Starts LuigiBot and processes commands until the user exits.
@@ -29,36 +23,36 @@ public class LuigiBot {
      * @param args command-line arguments, which are not used
      */
     public static void main(String[] args) {
-        printGreeting();
+        Ui ui = new Ui();
+        ui.showGreeting();
 
-        Scanner scanner = new Scanner(System.in);
-        List<Task> tasks = loadTasks();
+        List<Task> tasks = loadTasks(ui);
 
         while (true) {
-            String userInput = scanner.nextLine();
+            String userInput = ui.readCommand();
 
             if (userInput.equals("bye")) {
                 break;
             }
             if (userInput.isBlank()) {
-                printError("Mamma mia! You didn't-a enter a command.");
+                ui.showError("Mamma mia! You didn't-a enter a command.");
             } else if (userInput.equals("delete") || userInput.startsWith("delete ")) {
-                deleteTask(userInput.substring(6).trim(), tasks);
+                deleteTask(userInput.substring(6).trim(), tasks, ui);
             } else if (userInput.equals("unmark") || userInput.startsWith("unmark ")) {
-                updateTaskStatus(userInput.substring(6).trim(), tasks, false);
+                updateTaskStatus(userInput.substring(6).trim(), tasks, false, ui);
             } else if (userInput.equals("mark") || userInput.startsWith("mark ")) {
-                updateTaskStatus(userInput.substring(4).trim(), tasks, true);
+                updateTaskStatus(userInput.substring(4).trim(), tasks, true, ui);
             } else if (userInput.equals("list")) {
-                printTaskList(tasks);
+                ui.showTaskList(tasks);
             } else if (userInput.equals("on") || userInput.startsWith("on ")) {
-                printTasksOnDate(userInput.substring(2).trim(), tasks);
+                printTasksOnDate(userInput.substring(2).trim(), tasks, ui);
             } else if (userInput.equals("todo") || userInput.startsWith("todo ")) {
                 String description = userInput.substring(4).trim();
                 if (description.isEmpty()) {
-                    printError("Mamma mia! The task description can't-a be empty.");
+                    ui.showError("Mamma mia! The task description can't-a be empty.");
                 } else {
                     Todo todo = new Todo(description);
-                    addTask(todo, tasks);
+                    addTask(todo, tasks, ui);
                 }
             } else if (userInput.equals("deadline") || userInput.startsWith("deadline ")) {
                 String deadlineDetails = userInput.substring(8).trim();
@@ -69,20 +63,20 @@ public class LuigiBot {
                         || Character.isWhitespace(deadlineDetails.charAt(byIndex + 3)));
 
                 if (!hasByMarker) {
-                    printError("Oh no! Luigi needs-a know the deadline! Use /by.");
+                    ui.showError("Oh no! Luigi needs-a know the deadline! Use /by.");
                 } else {
                     String description = deadlineDetails.substring(0, byIndex).trim();
                     String by = deadlineDetails.substring(byIndex + 3).trim();
                     if (description.isEmpty()) {
-                        printError("Mamma mia! The task description can't-a be empty.");
+                        ui.showError("Mamma mia! The task description can't-a be empty.");
                     } else if (by.isEmpty()) {
-                        printError("Oh no! Luigi needs-a know the deadline! Use /by.");
+                        ui.showError("Oh no! Luigi needs-a know the deadline! Use /by.");
                     } else {
                         try {
                             Deadline deadline = new Deadline(description, by);
-                            addTask(deadline, tasks);
+                            addTask(deadline, tasks, ui);
                         } catch (DateTimeParseException exception) {
-                            printError("Mamma mia! Use-a yyyy-MM-dd HHmm "
+                            ui.showError("Mamma mia! Use-a yyyy-MM-dd HHmm "
                                     + "for the deadline date and time.");
                         }
                     }
@@ -101,33 +95,33 @@ public class LuigiBot {
                         || Character.isWhitespace(eventDetails.charAt(toIndex + 3)));
 
                 if (!hasFromMarker || !hasToMarker || fromIndex >= toIndex) {
-                    printError("Mamma mia! Use: event DESCRIPTION /from START /to END.");
+                    ui.showError("Mamma mia! Use: event DESCRIPTION /from START /to END.");
                 } else {
                     String description = eventDetails.substring(0, fromIndex).trim();
                     String from = eventDetails.substring(fromIndex + 5, toIndex).trim();
                     String to = eventDetails.substring(toIndex + 3).trim();
                     if (description.isEmpty()) {
-                        printError("Mamma mia! The task description can't-a be empty.");
+                        ui.showError("Mamma mia! The task description can't-a be empty.");
                     } else if (from.isEmpty() || to.isEmpty()) {
-                        printError("Mamma mia! Use: event DESCRIPTION /from START /to END.");
+                        ui.showError("Mamma mia! Use: event DESCRIPTION /from START /to END.");
                     } else {
                         try {
                             Event event = new Event(description, from, to);
-                            addTask(event, tasks);
+                            addTask(event, tasks, ui);
                         } catch (DateTimeParseException exception) {
-                            printError("Mamma mia! Use-a yyyy-MM-dd HHmm for both Event times.");
+                            ui.showError("Mamma mia! Use-a yyyy-MM-dd HHmm for both Event times.");
                         } catch (IllegalArgumentException exception) {
-                            printError("Mamma mia! The Event must-a end after it starts.");
+                            ui.showError("Mamma mia! The Event must-a end after it starts.");
                         }
                     }
                 }
             } else {
-                printError("Oh no! Luigi doesn't-a recognize that command.");
+                ui.showError("Oh no! Luigi doesn't-a recognize that command.");
             }
         }
 
-        scanner.close();
-        printGoodbye();
+        ui.close();
+        ui.showGoodbye();
     }
 
     /**
@@ -136,10 +130,10 @@ public class LuigiBot {
      * @param task task to add
      * @param tasks list containing the stored tasks
      */
-    private static void addTask(Task task, List<Task> tasks) {
+    private static void addTask(Task task, List<Task> tasks, Ui ui) {
         tasks.add(task);
-        saveTasks(tasks);
-        printTaskAdded(task, tasks.size());
+        saveTasks(tasks, ui);
+        ui.showTaskAdded(task, tasks.size());
     }
 
     /**
@@ -148,77 +142,25 @@ public class LuigiBot {
      * @param taskNumberText user-provided task number
      * @param tasks list containing the stored tasks
      */
-    private static void deleteTask(String taskNumberText, List<Task> tasks) {
+    private static void deleteTask(String taskNumberText, List<Task> tasks, Ui ui) {
         if (taskNumberText.isEmpty()) {
-            printError("Oh no! Luigi can't-a find that task number.");
+            ui.showError("Oh no! Luigi can't-a find that task number.");
             return;
         }
 
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
-                printError("Oh no! Luigi can't-a find that task number.");
+                ui.showError("Oh no! Luigi can't-a find that task number.");
                 return;
             }
 
             Task removedTask = tasks.remove(taskNumber - 1);
-            saveTasks(tasks);
-            printTaskDeleted(removedTask, tasks.size());
+            saveTasks(tasks, ui);
+            ui.showTaskDeleted(removedTask, tasks.size());
         } catch (NumberFormatException exception) {
-            printError("Mamma mia! Please-a enter a whole task number.");
+            ui.showError("Mamma mia! Please-a enter a whole task number.");
         }
-    }
-
-    /**
-     * Prints confirmation that a typed task has been stored.
-     *
-     * @param task task that was stored
-     * @param taskCount number of stored tasks after adding the task
-     */
-    private static void printTaskAdded(Task task, int taskCount) {
-        System.out.println(LINE);
-        System.out.println("Okie-dokie! Luigi added this task:");
-        System.out.println("  " + task);
-        System.out.println("You've-a got " + taskCount + " tasks now!");
-        System.out.println(LINE);
-    }
-
-    /**
-     * Prints confirmation that a task has been marked as done.
-     *
-     * @param task task that was marked
-     */
-    private static void printTaskMarked(Task task) {
-        System.out.println(LINE);
-        System.out.println("Nice-a! Luigi marked this task as done:");
-        System.out.println("  " + task);
-        System.out.println(LINE);
-    }
-
-    /**
-     * Prints confirmation that a task has been marked as not done.
-     *
-     * @param task task that was unmarked
-     */
-    private static void printTaskUnmarked(Task task) {
-        System.out.println(LINE);
-        System.out.println("No problem! Luigi marked this task as not done:");
-        System.out.println("  " + task);
-        System.out.println(LINE);
-    }
-
-    /**
-     * Prints confirmation that a task has been removed.
-     *
-     * @param task task that was removed
-     * @param taskCount number of stored tasks after removing the task
-     */
-    private static void printTaskDeleted(Task task, int taskCount) {
-        System.out.println(LINE);
-        System.out.println("Okie-dokie! Luigi removed this task:");
-        System.out.println("  " + task);
-        System.out.println("You've-a got " + taskCount + " tasks now!");
-        System.out.println(LINE);
     }
 
     /**
@@ -229,26 +171,26 @@ public class LuigiBot {
      * @param markAsDone whether the selected task should be marked as done
      */
     private static void updateTaskStatus(String taskNumberText, List<Task> tasks,
-                                         boolean markAsDone) {
+                                         boolean markAsDone, Ui ui) {
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
-                printError("Oh no! Luigi can't-a find that task number.");
+                ui.showError("Oh no! Luigi can't-a find that task number.");
                 return;
             }
 
             Task task = tasks.get(taskNumber - 1);
             if (markAsDone) {
                 task.mark();
-                saveTasks(tasks);
-                printTaskMarked(task);
+                saveTasks(tasks, ui);
+                ui.showTaskMarked(task);
             } else {
                 task.unmark();
-                saveTasks(tasks);
-                printTaskUnmarked(task);
+                saveTasks(tasks, ui);
+                ui.showTaskUnmarked(task);
             }
         } catch (NumberFormatException exception) {
-            printError("Mamma mia! Please-a enter a whole task number.");
+            ui.showError("Mamma mia! Please-a enter a whole task number.");
         }
     }
 
@@ -257,7 +199,7 @@ public class LuigiBot {
      *
      * @param tasks tasks to save
      */
-    private static void saveTasks(List<Task> tasks) {
+    private static void saveTasks(List<Task> tasks, Ui ui) {
         try {
             Files.createDirectories(SAVE_PATH.getParent());
             List<String> taskData = new ArrayList<>();
@@ -266,7 +208,7 @@ public class LuigiBot {
             }
             Files.write(SAVE_PATH, taskData);
         } catch (IOException exception) {
-            printError("Mamma mia! Luigi couldn't-a save your tasks.");
+            ui.showError("Mamma mia! Luigi couldn't-a save your tasks.");
         }
     }
 
@@ -275,7 +217,7 @@ public class LuigiBot {
      *
      * @return tasks reconstructed from the save file
      */
-    private static List<Task> loadTasks() {
+    private static List<Task> loadTasks(Ui ui) {
         List<Task> tasks = new ArrayList<>();
         if (!Files.exists(SAVE_PATH)) {
             return tasks;
@@ -286,11 +228,11 @@ public class LuigiBot {
                 try {
                     tasks.add(parseTask(taskData));
                 } catch (IllegalArgumentException | DateTimeParseException exception) {
-                    printError("Mamma mia! Luigi skipped-a an invalid saved task.");
+                    ui.showError("Mamma mia! Luigi skipped-a an invalid saved task.");
                 }
             }
         } catch (IOException exception) {
-            printError("Mamma mia! Luigi couldn't-a read the task file.");
+            ui.showError("Mamma mia! Luigi couldn't-a read the task file.");
         }
         return tasks;
     }
@@ -336,28 +278,14 @@ public class LuigiBot {
     }
 
     /**
-     * Prints all stored tasks using numbering that starts from 1.
-     *
-     * @param tasks stored tasks
-     */
-    private static void printTaskList(List<Task> tasks) {
-        System.out.println(LINE);
-        System.out.println("Let's-a see what Luigi has on the list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + "." + tasks.get(i));
-        }
-        System.out.println(LINE);
-    }
-
-    /**
      * Parses a date and prints all dated tasks that occur on it.
      *
      * @param dateText user-provided date in yyyy-MM-dd format
      * @param tasks stored tasks
      */
-    private static void printTasksOnDate(String dateText, List<Task> tasks) {
+    private static void printTasksOnDate(String dateText, List<Task> tasks, Ui ui) {
         if (dateText.isEmpty()) {
-            printError("Mamma mia! Luigi needs-a date. Use: on yyyy-MM-dd.");
+            ui.showError("Mamma mia! Luigi needs-a date. Use: on yyyy-MM-dd.");
             return;
         }
 
@@ -370,57 +298,9 @@ public class LuigiBot {
                 }
             }
 
-            System.out.println(LINE);
-            if (matchingIndexes.isEmpty()) {
-                System.out.println("Mamma mia! Luigi found-a no tasks on "
-                        + date.format(DATE_DISPLAY_FORMAT) + ".");
-            } else {
-                System.out.println("Luigi found-a these tasks on "
-                        + date.format(DATE_DISPLAY_FORMAT) + ":");
-                for (int index : matchingIndexes) {
-                    System.out.println((index + 1) + "." + tasks.get(index));
-                }
-            }
-            System.out.println(LINE);
+            ui.showTasksOnDate(date, tasks, matchingIndexes);
         } catch (DateTimeParseException exception) {
-            printError("Mamma mia! Use-a yyyy-MM-dd for the date.");
+            ui.showError("Mamma mia! Use-a yyyy-MM-dd for the date.");
         }
-    }
-
-    /**
-     * Prints an error message between separator lines.
-     *
-     * @param message error message to show the user
-     */
-    private static void printError(String message) {
-        System.out.println(LINE);
-        System.out.println(message);
-        System.out.println(LINE);
-    }
-
-    /**
-     * Helper for welcome banner
-     */
-    private static void printGreeting() {
-        System.out.println(LINE);
-        String banner = ".____          .__       .____________        __   \n"
-                + "|    |    __ __|__| ____ |__\\______   \\ _____/  |_\n"
-                + "|    |   |  |  \\  |/ ___\\|  ||    |  _//  _ \\   __\\\n"
-                + "|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | \n"
-                + "|_______ \\____/|__\\___  /|__||______  /\\____/|__|\n"
-                + "        \\/       /_____/            \\/             \n";
-        System.out.print(banner); // Using print instead of println because the banner already ends with \n
-        System.out.println(LINE);
-        System.out.println("Its a-me,LuigiBot!");
-        System.out.println("What can I do for you?");
-        System.out.println(LINE);
-    }
-
-    /**
-     * Prints the exit message.
-     */
-    private static void printGoodbye() {
-        System.out.println("Mama mia! Leaving already? Cya soon!");
-        System.out.println(LINE);
     }
 }
