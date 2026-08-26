@@ -38,7 +38,8 @@ public class LuigiBot {
                             arguments, tasks, true, storage, ui, parser);
                     case "list" -> {
                         if (userInput.equals("list")) {
-                            ui.showTaskList(tasks);
+                            Command command = new ListCommand();
+                            command.execute(tasks, ui, storage);
                         } else {
                             ui.showError("Oh no! Luigi doesn't-a recognize that command.");
                         }
