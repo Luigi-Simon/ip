@@ -1,6 +1,3 @@
-import java.time.LocalDate;
-import java.util.List;
-
 /**
  * Runs LuigiBot's command-line task manager.
  */
@@ -45,7 +42,8 @@ public class LuigiBot {
                             ui.showError("Oh no! Luigi doesn't-a recognize that command.");
                         }
                     }
-                    case "on" -> printTasksOnDate(arguments, tasks, ui, parser);
+                    case "on" -> executeCommand(
+                            new FindCommand(parser.parseDate(arguments)), tasks, storage, ui);
                     case "todo" -> executeCommand(
                             new AddCommand(parser.parseTodo(arguments)), tasks, storage, ui);
                     case "deadline" -> executeCommand(
@@ -92,18 +90,5 @@ public class LuigiBot {
 
         int taskNumber = parser.parseTaskNumber(taskNumberText);
         executeCommand(new DeleteCommand(taskNumber), tasks, storage, ui);
-    }
-
-    /**
-     * Parses a date and prints all dated tasks that occur on it.
-     *
-     * @param dateText user-provided date in yyyy-MM-dd format
-     * @param tasks stored tasks
-     */
-    private static void printTasksOnDate(String dateText, TaskList tasks, Ui ui,
-                                         Parser parser) {
-        LocalDate date = parser.parseDate(dateText);
-        List<Integer> matchingIndexes = tasks.findIndexesOnDate(date);
-        ui.showTasksOnDate(date, tasks, matchingIndexes);
     }
 }
