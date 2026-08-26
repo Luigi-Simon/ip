@@ -1,6 +1,3 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -12,7 +9,6 @@ import java.util.List;
  * Runs LuigiBot's command-line task manager.
  */
 public class LuigiBot {
-    private static final Path SAVE_PATH = Path.of("data", "luigibot.txt");
     private static final DateTimeFormatter DATE_INPUT_FORMAT =
             DateTimeFormatter.ofPattern("uuuu-MM-dd")
                     .withResolverStyle(ResolverStyle.STRICT);
@@ -24,9 +20,10 @@ public class LuigiBot {
      */
     public static void main(String[] args) {
         Ui ui = new Ui();
+        Storage storage = new Storage("data/luigibot.txt");
         ui.showGreeting();
 
-        List<Task> tasks = loadTasks(ui);
+        List<Task> tasks = storage.load(ui);
 
         while (true) {
             String userInput = ui.readCommand();
@@ -37,11 +34,11 @@ public class LuigiBot {
             if (userInput.isBlank()) {
                 ui.showError("Mamma mia! You didn't-a enter a command.");
             } else if (userInput.equals("delete") || userInput.startsWith("delete ")) {
-                deleteTask(userInput.substring(6).trim(), tasks, ui);
+                deleteTask(userInput.substring(6).trim(), tasks, storage, ui);
             } else if (userInput.equals("unmark") || userInput.startsWith("unmark ")) {
-                updateTaskStatus(userInput.substring(6).trim(), tasks, false, ui);
+                updateTaskStatus(userInput.substring(6).trim(), tasks, false, storage, ui);
             } else if (userInput.equals("mark") || userInput.startsWith("mark ")) {
-                updateTaskStatus(userInput.substring(4).trim(), tasks, true, ui);
+                updateTaskStatus(userInput.substring(4).trim(), tasks, true, storage, ui);
             } else if (userInput.equals("list")) {
                 ui.showTaskList(tasks);
             } else if (userInput.equals("on") || userInput.startsWith("on ")) {
@@ -52,7 +49,7 @@ public class LuigiBot {
                     ui.showError("Mamma mia! The task description can't-a be empty.");
                 } else {
                     Todo todo = new Todo(description);
-                    addTask(todo, tasks, ui);
+                    addTask(todo, tasks, storage, ui);
                 }
             } else if (userInput.equals("deadline") || userInput.startsWith("deadline ")) {
                 String deadlineDetails = userInput.substring(8).trim();
@@ -74,7 +71,7 @@ public class LuigiBot {
                     } else {
                         try {
                             Deadline deadline = new Deadline(description, by);
-                            addTask(deadline, tasks, ui);
+                            addTask(deadline, tasks, storage, ui);
                         } catch (DateTimeParseException exception) {
                             ui.showError("Mamma mia! Use-a yyyy-MM-dd HHmm "
                                     + "for the deadline date and time.");
@@ -107,7 +104,7 @@ public class LuigiBot {
                     } else {
                         try {
                             Event event = new Event(description, from, to);
-                            addTask(event, tasks, ui);
+                            addTask(event, tasks, storage, ui);
                         } catch (DateTimeParseException exception) {
                             ui.showError("Mamma mia! Use-a yyyy-MM-dd HHmm for both Event times.");
                         } catch (IllegalArgumentException exception) {
@@ -130,9 +127,9 @@ public class LuigiBot {
      * @param task task to add
      * @param tasks list containing the stored tasks
      */
-    private static void addTask(Task task, List<Task> tasks, Ui ui) {
+    private static void addTask(Task task, List<Task> tasks, Storage storage, Ui ui) {
         tasks.add(task);
-        saveTasks(tasks, ui);
+        storage.save(tasks, ui);
         ui.showTaskAdded(task, tasks.size());
     }
 
@@ -142,7 +139,8 @@ public class LuigiBot {
      * @param taskNumberText user-provided task number
      * @param tasks list containing the stored tasks
      */
-    private static void deleteTask(String taskNumberText, List<Task> tasks, Ui ui) {
+    private static void deleteTask(String taskNumberText, List<Task> tasks,
+                                   Storage storage, Ui ui) {
         if (taskNumberText.isEmpty()) {
             ui.showError("Oh no! Luigi can't-a find that task number.");
             return;
@@ -156,7 +154,7 @@ public class LuigiBot {
             }
 
             Task removedTask = tasks.remove(taskNumber - 1);
-            saveTasks(tasks, ui);
+            storage.save(tasks, ui);
             ui.showTaskDeleted(removedTask, tasks.size());
         } catch (NumberFormatException exception) {
             ui.showError("Mamma mia! Please-a enter a whole task number.");
@@ -171,7 +169,7 @@ public class LuigiBot {
      * @param markAsDone whether the selected task should be marked as done
      */
     private static void updateTaskStatus(String taskNumberText, List<Task> tasks,
-                                         boolean markAsDone, Ui ui) {
+                                         boolean markAsDone, Storage storage, Ui ui) {
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
@@ -182,99 +180,16 @@ public class LuigiBot {
             Task task = tasks.get(taskNumber - 1);
             if (markAsDone) {
                 task.mark();
-                saveTasks(tasks, ui);
+                storage.save(tasks, ui);
                 ui.showTaskMarked(task);
             } else {
                 task.unmark();
-                saveTasks(tasks, ui);
+                storage.save(tasks, ui);
                 ui.showTaskUnmarked(task);
             }
         } catch (NumberFormatException exception) {
             ui.showError("Mamma mia! Please-a enter a whole task number.");
         }
-    }
-
-    /**
-     * Writes the current task list to the hard disk.
-     *
-     * @param tasks tasks to save
-     */
-    private static void saveTasks(List<Task> tasks, Ui ui) {
-        try {
-            Files.createDirectories(SAVE_PATH.getParent());
-            List<String> taskData = new ArrayList<>();
-            for (Task task : tasks) {
-                taskData.add(task.toFileString());
-            }
-            Files.write(SAVE_PATH, taskData);
-        } catch (IOException exception) {
-            ui.showError("Mamma mia! Luigi couldn't-a save your tasks.");
-        }
-    }
-
-    /**
-     * Loads tasks from the save file, or returns an empty list when no file exists.
-     *
-     * @return tasks reconstructed from the save file
-     */
-    private static List<Task> loadTasks(Ui ui) {
-        List<Task> tasks = new ArrayList<>();
-        if (!Files.exists(SAVE_PATH)) {
-            return tasks;
-        }
-
-        try {
-            for (String taskData : Files.readAllLines(SAVE_PATH)) {
-                try {
-                    tasks.add(parseTask(taskData));
-                } catch (IllegalArgumentException | DateTimeParseException exception) {
-                    ui.showError("Mamma mia! Luigi skipped-a an invalid saved task.");
-                }
-            }
-        } catch (IOException exception) {
-            ui.showError("Mamma mia! Luigi couldn't-a read the task file.");
-        }
-        return tasks;
-    }
-
-    /**
-     * Reconstructs one task from its save-file representation.
-     *
-     * @param taskData save-file representation of one task
-     * @return reconstructed task
-     */
-    private static Task parseTask(String taskData) {
-        String[] fields = taskData.split(" \\| ", -1);
-        if (fields.length < 2 || (!fields[1].equals("0") && !fields[1].equals("1"))) {
-            throw new IllegalArgumentException("Invalid task status");
-        }
-
-        int expectedFieldCount = switch (fields[0]) {
-            case "T" -> 3;
-            case "D" -> 4;
-            case "E" -> 5;
-            default -> throw new IllegalArgumentException("Unknown task type");
-        };
-        if (fields.length != expectedFieldCount) {
-            throw new IllegalArgumentException("Invalid task field count");
-        }
-        for (int i = 2; i < fields.length; i++) {
-            if (fields[i].isBlank()) {
-                throw new IllegalArgumentException("Empty task field");
-            }
-        }
-
-        Task task = switch (fields[0]) {
-            case "T" -> new Todo(fields[2]);
-            case "D" -> new Deadline(fields[2], fields[3]);
-            case "E" -> new Event(fields[2], fields[3], fields[4]);
-            default -> throw new IllegalArgumentException("Unknown task type");
-        };
-
-        if (fields[1].equals("1")) {
-            task.mark();
-        }
-        return task;
     }
 
     /**
