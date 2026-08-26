@@ -76,7 +76,7 @@ public class LuigiBot {
     }
 
     /**
-     * Validates a task number and removes the selected task.
+     * Parses a task number and executes a command to delete the selected task.
      *
      * @param taskNumberText user-provided task number
      * @param tasks list containing the stored tasks
@@ -89,14 +89,7 @@ public class LuigiBot {
         }
 
         int taskNumber = parser.parseTaskNumber(taskNumberText);
-        if (!tasks.isValidTaskNumber(taskNumber)) {
-            ui.showError("Oh no! Luigi can't-a find that task number.");
-            return;
-        }
-
-        Task removedTask = tasks.delete(taskNumber);
-        storage.save(tasks, ui);
-        ui.showTaskDeleted(removedTask, tasks.size());
+        executeCommand(new DeleteCommand(taskNumber), tasks, storage, ui);
     }
 
     /**
