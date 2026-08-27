@@ -1,8 +1,13 @@
+package luigibot.ui;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+
+import luigibot.task.Task;
+import luigibot.task.TaskList;
 
 /**
  * Handles console input and output for LuigiBot.

@@ -80,9 +80,9 @@ def parse_test_plan(plan_path: Path) -> list[TestCase]:
 
 def compile_program(repo_root: Path, classes_dir: Path) -> None:
     """Compile all project Java sources into a temporary directory."""
-    sources = sorted((repo_root / "src" / "main" / "java").glob("*.java"))
+    sources = sorted((repo_root / "src" / "main" / "java").rglob("*.java"))
     if not sources:
-        raise RuntimeError("No Java source files found in src/main/java")
+        raise RuntimeError("No Java source files found under src/main/java")
     result = subprocess.run(
         ["javac", "-d", str(classes_dir), *(str(source) for source in sources)],
         cwd=repo_root,
@@ -98,7 +98,7 @@ def run_case(working_dir: Path, classes_dir: Path, case: TestCase) -> str:
     """Run one fresh LuigiBot process and return normalized console output."""
     session_input = case.input_text + "\n"
     result = subprocess.run(
-        ["java", "-cp", str(classes_dir), "LuigiBot"],
+        ["java", "-cp", str(classes_dir), "luigibot.LuigiBot"],
         cwd=working_dir,
         input=session_input,
         capture_output=True,

@@ -1,3 +1,9 @@
+package luigibot.command;
+
+import luigibot.storage.Storage;
+import luigibot.task.TaskList;
+import luigibot.ui.Ui;
+
 /**
  * Represents an instruction that LuigiBot can execute.
  */
