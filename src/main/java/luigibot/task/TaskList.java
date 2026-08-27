@@ -39,8 +39,9 @@ public class TaskList {
     /**
      * Removes and returns the task with the given displayed task number.
      *
-     * @param taskNumber displayed task number, starting from 1
-     * @return removed task
+     * @param taskNumber displayed task number, starting from 1.
+     * @return removed task.
+     * @throws IndexOutOfBoundsException if the task number does not identify a stored task.
      */
     public Task delete(int taskNumber) {
         return this.tasks.remove(taskNumber - 1);
@@ -49,8 +50,9 @@ public class TaskList {
     /**
      * Marks the task with the given displayed task number as done.
      *
-     * @param taskNumber displayed task number, starting from 1
-     * @return task that was marked
+     * @param taskNumber displayed task number, starting from 1.
+     * @return task that was marked.
+     * @throws IndexOutOfBoundsException if the task number does not identify a stored task.
      */
     public Task mark(int taskNumber) {
         Task task = getTask(taskNumber);
@@ -61,8 +63,9 @@ public class TaskList {
     /**
      * Marks the task with the given displayed task number as not done.
      *
-     * @param taskNumber displayed task number, starting from 1
-     * @return task that was unmarked
+     * @param taskNumber displayed task number, starting from 1.
+     * @return task that was unmarked.
+     * @throws IndexOutOfBoundsException if the task number does not identify a stored task.
      */
     public Task unmark(int taskNumber) {
         Task task = getTask(taskNumber);
