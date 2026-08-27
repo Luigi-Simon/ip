@@ -1,3 +1,11 @@
+package luigibot;
+
+import luigibot.command.Command;
+import luigibot.parser.Parser;
+import luigibot.storage.Storage;
+import luigibot.task.TaskList;
+import luigibot.ui.Ui;
+
 /**
  * Runs LuigiBot's command-line task manager.
  */

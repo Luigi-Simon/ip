@@ -1,23 +1,30 @@
+package luigibot.command;
+
+import luigibot.storage.Storage;
+import luigibot.task.Task;
+import luigibot.task.TaskList;
+import luigibot.ui.Ui;
+
 /**
- * Marks a task in LuigiBot's task list as done.
+ * Deletes a task from LuigiBot's task list.
  */
-public class MarkCommand extends Command {
+public class DeleteCommand extends Command {
     private static final String TASK_NOT_FOUND_ERROR =
             "Oh no! Luigi can't-a find that task number.";
 
     private final int taskNumber;
 
     /**
-     * Creates a command that marks the task with the given displayed number.
+     * Creates a command that deletes the task with the given displayed number.
      *
      * @param taskNumber displayed task number, starting from 1
      */
-    public MarkCommand(int taskNumber) {
+    public DeleteCommand(int taskNumber) {
         this.taskNumber = taskNumber;
     }
 
     /**
-     * Marks the task, saves the updated list, and displays a confirmation.
+     * Deletes the task, saves the updated list, and displays a confirmation.
      *
      * @param tasks stored tasks
      * @param ui user interface used to display the confirmation
@@ -29,8 +36,8 @@ public class MarkCommand extends Command {
             throw new IllegalArgumentException(TASK_NOT_FOUND_ERROR);
         }
 
-        Task task = tasks.mark(this.taskNumber);
+        Task removedTask = tasks.delete(this.taskNumber);
         storage.save(tasks, ui);
-        ui.showTaskMarked(task);
+        ui.showTaskDeleted(removedTask, tasks.size());
     }
 }

@@ -1,3 +1,10 @@
+package luigibot.command;
+
+import luigibot.storage.Storage;
+import luigibot.task.Task;
+import luigibot.task.TaskList;
+import luigibot.ui.Ui;
+
 /**
  * Adds a task to LuigiBot's task list.
  */
