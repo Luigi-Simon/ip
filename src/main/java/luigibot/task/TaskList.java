@@ -115,6 +115,22 @@ public class TaskList {
     }
 
     /**
+     * Returns the indexes of tasks whose descriptions contain the keyword.
+     *
+     * @param keyword keyword to search for, ignoring case
+     * @return zero-based indexes of matching tasks
+     */
+    public List<Integer> findIndexesByKeyword(String keyword) {
+        List<Integer> matchingIndexes = new ArrayList<>();
+        for (int i = 0; i < this.tasks.size(); i++) {
+            if (this.tasks.get(i).matchesDescription(keyword)) {
+                matchingIndexes.add(i);
+            }
+        }
+        return matchingIndexes;
+    }
+
+    /**
      * Returns the task with the given displayed task number.
      *
      * @param taskNumber displayed task number, starting from 1

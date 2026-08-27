@@ -41,6 +41,56 @@ Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
 ```
 
+## Test case: Find tasks by description keyword
+
+**Aim:** Verify that `find` performs a case-insensitive description search, preserves task numbering, and reports when there are no matches.
+
+### Input
+
+```text
+todo read book
+todo return book
+find BOOK
+find pizza
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [T][ ] read book
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [T][ ] return book
+You've-a got 2 tasks now!
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in Luigi's list:
+1.[T][ ] read book
+2.[T][ ] return book
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi found-a no tasks matching "pizza".
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
 ## Test case: Skip malformed saved tasks
 
 **Aim:** Verify that malformed save lines are reported and skipped without affecting valid loaded tasks.

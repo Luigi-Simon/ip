@@ -136,4 +136,22 @@ public class TaskListTest {
 
         assertEquals(List.of(), tasks.findIndexesOnDate(LocalDate.of(2026, 8, 27)));
     }
+
+    @Test
+    public void findIndexesByKeyword_caseInsensitiveMatchesInListOrderReturned() {
+        TaskList tasks = new TaskList(List.of(
+                new Todo("read book"),
+                new Deadline("submit report", "2026-08-27 1800"),
+                new Todo("Book a table"),
+                new Event("team meeting", "2026-08-27 1400", "2026-08-27 1600")));
+
+        assertEquals(List.of(0, 2), tasks.findIndexesByKeyword("BOOK"));
+    }
+
+    @Test
+    public void findIndexesByKeyword_noMatches_emptyListReturned() {
+        TaskList tasks = new TaskList(List.of(new Todo("read book")));
+
+        assertEquals(List.of(), tasks.findIndexesByKeyword("report"));
+    }
 }

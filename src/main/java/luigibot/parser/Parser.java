@@ -10,6 +10,7 @@ import luigibot.command.Command;
 import luigibot.command.DeleteCommand;
 import luigibot.command.ExitCommand;
 import luigibot.command.FindCommand;
+import luigibot.command.FindKeywordCommand;
 import luigibot.command.ListCommand;
 import luigibot.command.MarkCommand;
 import luigibot.command.UnmarkCommand;
@@ -66,6 +67,7 @@ public class Parser {
             yield new ListCommand();
         }
         case "on" -> new FindCommand(parseDate(arguments));
+        case "find" -> new FindKeywordCommand(parseKeyword(arguments));
         case "todo" -> new AddCommand(parseTodo(arguments));
         case "deadline" -> new AddCommand(parseDeadline(arguments));
         case "event" -> new AddCommand(parseEvent(arguments));
@@ -213,6 +215,19 @@ public class Parser {
             throw new IllegalArgumentException(
                     "Mamma mia! Use-a yyyy-MM-dd for the date.", exception);
         }
+    }
+
+    /**
+     * Parses a keyword used to search task descriptions.
+     *
+     * @param keywordText keyword entered by the user
+     * @return trimmed keyword
+     */
+    private String parseKeyword(String keywordText) {
+        if (keywordText.isEmpty()) {
+            throw new IllegalArgumentException("Mamma mia! Luigi needs-a a keyword to find.");
+        }
+        return keywordText;
     }
 
     /**

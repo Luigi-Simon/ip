@@ -167,4 +167,26 @@ public class Ui {
         }
         System.out.println(LINE);
     }
+
+    /**
+     * Shows tasks whose descriptions contain a keyword.
+     *
+     * @param keyword keyword being searched
+     * @param tasks stored tasks
+     * @param matchingIndexes indexes of matching tasks
+     */
+    public void showTasksMatchingKeyword(String keyword, TaskList tasks,
+                                         List<Integer> matchingIndexes) {
+        System.out.println(LINE);
+        if (matchingIndexes.isEmpty()) {
+            System.out.println("Mamma mia! Luigi found-a no tasks matching \""
+                    + keyword + "\".");
+        } else {
+            System.out.println("Here are the matching tasks in Luigi's list:");
+            for (int index : matchingIndexes) {
+                System.out.println((index + 1) + "." + tasks.getTasks().get(index));
+            }
+        }
+        System.out.println(LINE);
+    }
 }
