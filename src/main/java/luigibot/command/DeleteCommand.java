@@ -17,7 +17,7 @@ public class DeleteCommand extends Command {
     /**
      * Creates a command that deletes the task with the given displayed number.
      *
-     * @param taskNumber displayed task number, starting from 1
+     * @param taskNumber displayed task number, starting from 1.
      */
     public DeleteCommand(int taskNumber) {
         this.taskNumber = taskNumber;
@@ -26,9 +26,9 @@ public class DeleteCommand extends Command {
     /**
      * Deletes the task, saves the updated list, and displays a confirmation.
      *
-     * @param tasks stored tasks
-     * @param ui user interface used to display the confirmation
-     * @param storage storage used to persist the updated task list
+     * @param tasks stored tasks.
+     * @param ui user interface used to display the confirmation.
+     * @param storage storage used to persist the updated task list.
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {

@@ -47,8 +47,8 @@ public class Parser {
     /**
      * Parses full user input and creates the corresponding command.
      *
-     * @param userInput full user input
-     * @return command represented by the user input
+     * @param userInput full user input.
+     * @return command represented by the user input.
      */
     public Command parse(String userInput) {
         if (userInput.isBlank()) {
@@ -80,8 +80,8 @@ public class Parser {
     /**
      * Returns the command word before the first space.
      *
-     * @param userInput full user input
-     * @return command word
+     * @param userInput full user input.
+     * @return command word.
      */
     private String getCommandWord(String userInput) {
         int firstSpaceIndex = userInput.indexOf(' ');
@@ -94,8 +94,8 @@ public class Parser {
     /**
      * Returns the trimmed text following the command word.
      *
-     * @param userInput full user input
-     * @return command arguments, or an empty string when none were supplied
+     * @param userInput full user input.
+     * @return command arguments, or an empty string when none were supplied.
      */
     private String getArguments(String userInput) {
         int firstSpaceIndex = userInput.indexOf(' ');
@@ -108,8 +108,8 @@ public class Parser {
     /**
      * Parses a Todo from its command arguments.
      *
-     * @param arguments Todo description
-     * @return parsed Todo
+     * @param arguments Todo description.
+     * @return parsed Todo.
      */
     private Todo parseTodo(String arguments) {
         if (arguments.isEmpty()) {
@@ -121,8 +121,8 @@ public class Parser {
     /**
      * Parses a Deadline from its command arguments.
      *
-     * @param arguments Deadline description and /by value
-     * @return parsed Deadline
+     * @param arguments Deadline description and /by value.
+     * @return parsed Deadline.
      */
     private Deadline parseDeadline(String arguments) {
         int byIndex = arguments.indexOf("/by");
@@ -149,8 +149,8 @@ public class Parser {
     /**
      * Parses an Event from its command arguments.
      *
-     * @param arguments Event description, /from value, and /to value
-     * @return parsed Event
+     * @param arguments Event description, /from value, and /to value.
+     * @return parsed Event.
      */
     private Event parseEvent(String arguments) {
         int fromIndex = arguments.indexOf("/from");
@@ -183,8 +183,8 @@ public class Parser {
     /**
      * Parses a displayed task number.
      *
-     * @param taskNumberText task number entered by the user
-     * @return parsed task number
+     * @param taskNumberText task number entered by the user.
+     * @return parsed task number.
      */
     private int parseTaskNumber(String taskNumberText) {
         try {
@@ -198,8 +198,8 @@ public class Parser {
     /**
      * Parses a date used to search for dated tasks.
      *
-     * @param dateText date entered by the user
-     * @return parsed date
+     * @param dateText date entered by the user.
+     * @return parsed date.
      */
     private LocalDate parseDate(String dateText) {
         if (dateText.isEmpty()) {
@@ -218,10 +218,10 @@ public class Parser {
     /**
      * Returns whether text at the given index is a separate command marker.
      *
-     * @param text text containing the marker
-     * @param markerIndex index where the marker starts
-     * @param markerLength number of characters in the marker
-     * @return true when whitespace or a string boundary surrounds the marker
+     * @param text text containing the marker.
+     * @param markerIndex index where the marker starts.
+     * @param markerLength number of characters in the marker.
+     * @return true when whitespace or a string boundary surrounds the marker.
      */
     private boolean hasMarker(String text, int markerIndex, int markerLength) {
         return markerIndex >= 0
@@ -233,8 +233,8 @@ public class Parser {
     /**
      * Parses a DeleteCommand while preserving its missing-number error message.
      *
-     * @param arguments task number text
-     * @return parsed DeleteCommand
+     * @param arguments task number text.
+     * @return parsed DeleteCommand.
      */
     private DeleteCommand parseDeleteCommand(String arguments) {
         if (arguments.isEmpty()) {
@@ -246,8 +246,8 @@ public class Parser {
     /**
      * Validates a command that does not accept arguments.
      *
-     * @param userInput full user input
-     * @param expectedCommand expected exact command
+     * @param userInput full user input.
+     * @param expectedCommand expected exact command.
      */
     private void validateExactCommand(String userInput, String expectedCommand) {
         if (!userInput.equals(expectedCommand)) {

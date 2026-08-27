@@ -11,9 +11,9 @@ public class ExitCommand extends Command {
     /**
      * Displays LuigiBot's goodbye message.
      *
-     * @param tasks stored tasks
-     * @param ui user interface used to display the goodbye message
-     * @param storage storage dependency required by the common command interface
+     * @param tasks stored tasks.
+     * @param ui user interface used to display the goodbye message.
+     * @param storage storage dependency required by the common command interface.
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
@@ -23,7 +23,7 @@ public class ExitCommand extends Command {
     /**
      * Indicates that LuigiBot should stop accepting commands.
      *
-     * @return true because this command exits LuigiBot
+     * @return true because this command exits LuigiBot.
      */
     @Override
     public boolean isExit() {

@@ -22,9 +22,9 @@ public class Event extends Task {
     /**
      * Creates an incomplete event with the given description and date-time period.
      *
-     * @param description description of the event
-     * @param from date and time at which the event starts, in yyyy-MM-dd HHmm format
-     * @param to date and time at which the event ends, in yyyy-MM-dd HHmm format
+     * @param description description of the event.
+     * @param from date and time at which the event starts, in yyyy-MM-dd HHmm format.
+     * @param to date and time at which the event ends, in yyyy-MM-dd HHmm format.
      */
     public Event(String description, String from, String to) {
         super(description);
@@ -40,7 +40,7 @@ public class Event extends Task {
     /**
      * Returns the event type icon, task details, and time period.
      *
-     * @return display form of this event
+     * @return display form of this event.
      */
     @Override
     public String toString() {
@@ -52,7 +52,7 @@ public class Event extends Task {
     /**
      * Returns this event in the text format used by the save file.
      *
-     * @return save-file representation of this event
+     * @return save-file representation of this event.
      */
     @Override
     public String toFileString() {
@@ -63,8 +63,8 @@ public class Event extends Task {
     /**
      * Returns whether any part of this event occurs on the given date.
      *
-     * @param date date to check
-     * @return true when the event overlaps the given date
+     * @param date date to check.
+     * @return true when the event overlaps the given date.
      */
     @Override
     public boolean occursOn(LocalDate date) {

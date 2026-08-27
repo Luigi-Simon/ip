@@ -18,7 +18,7 @@ public class LuigiBot {
     /**
      * Creates LuigiBot using the specified task-file path.
      *
-     * @param filePath path used to load and save tasks
+     * @param filePath path used to load and save tasks.
      */
     public LuigiBot(String filePath) {
         this.ui = new Ui();
@@ -52,7 +52,7 @@ public class LuigiBot {
     /**
      * Starts LuigiBot with its default task-file path.
      *
-     * @param args command-line arguments, which are not used
+     * @param args command-line arguments, which are not used.
      */
     public static void main(String[] args) {
         new LuigiBot("data/luigibot.txt").run();

@@ -12,7 +12,7 @@ public class Task {
     /**
      * Creates an incomplete task with the given description.
      *
-     * @param description description of the task
+     * @param description description of the task.
      */
     public Task(String description) {
         this.description = description;
@@ -36,7 +36,7 @@ public class Task {
     /**
      * Returns the icon representing this task's completion state.
      *
-     * @return {@code [X]} when completed, or {@code [ ]} otherwise
+     * @return {@code [X]} when completed, or {@code [ ]} otherwise.
      */
     public String getStatusIcon() {
         return this.isDone ? "[X]" : "[ ]";
@@ -45,7 +45,7 @@ public class Task {
     /**
      * Returns this task in the text format used by the save file.
      *
-     * @return save-file representation of this task
+     * @return save-file representation of this task.
      */
     public String toFileString() {
         return getFileString("T");
@@ -54,8 +54,8 @@ public class Task {
     /**
      * Returns whether this task occurs on the given date.
      *
-     * @param date date to check
-     * @return false because a basic task has no date
+     * @param date date to check.
+     * @return false because a basic task has no date.
      */
     public boolean occursOn(LocalDate date) {
         return false;
@@ -64,8 +64,8 @@ public class Task {
     /**
      * Builds the common save-file fields for a specific task type.
      *
-     * @param taskType letter identifying the task type
-     * @return common save-file fields for this task
+     * @param taskType letter identifying the task type.
+     * @return common save-file fields for this task.
      */
     protected String getFileString(String taskType) {
         String status = this.isDone ? "1" : "0";
@@ -75,7 +75,7 @@ public class Task {
     /**
      * Returns the task's status icon followed by its description.
      *
-     * @return display form of this task
+     * @return display form of this task.
      */
     @Override
     public String toString() {

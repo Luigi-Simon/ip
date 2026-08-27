@@ -21,7 +21,7 @@ public class TaskList {
     /**
      * Creates a task list containing the given tasks.
      *
-     * @param tasks initial tasks
+     * @param tasks initial tasks.
      */
     public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
@@ -30,7 +30,7 @@ public class TaskList {
     /**
      * Adds a task to the end of the list.
      *
-     * @param task task to add
+     * @param task task to add.
      */
     public void add(Task task) {
         this.tasks.add(task);
@@ -39,8 +39,8 @@ public class TaskList {
     /**
      * Removes and returns the task with the given displayed task number.
      *
-     * @param taskNumber displayed task number, starting from 1
-     * @return removed task
+     * @param taskNumber displayed task number, starting from 1.
+     * @return removed task.
      */
     public Task delete(int taskNumber) {
         return this.tasks.remove(taskNumber - 1);
@@ -49,8 +49,8 @@ public class TaskList {
     /**
      * Marks the task with the given displayed task number as done.
      *
-     * @param taskNumber displayed task number, starting from 1
-     * @return task that was marked
+     * @param taskNumber displayed task number, starting from 1.
+     * @return task that was marked.
      */
     public Task mark(int taskNumber) {
         Task task = getTask(taskNumber);
@@ -61,8 +61,8 @@ public class TaskList {
     /**
      * Marks the task with the given displayed task number as not done.
      *
-     * @param taskNumber displayed task number, starting from 1
-     * @return task that was unmarked
+     * @param taskNumber displayed task number, starting from 1.
+     * @return task that was unmarked.
      */
     public Task unmark(int taskNumber) {
         Task task = getTask(taskNumber);
@@ -73,8 +73,8 @@ public class TaskList {
     /**
      * Returns whether a displayed task number identifies a stored task.
      *
-     * @param taskNumber displayed task number
-     * @return true when the task number is valid
+     * @param taskNumber displayed task number.
+     * @return true when the task number is valid.
      */
     public boolean isValidTaskNumber(int taskNumber) {
         return taskNumber >= 1 && taskNumber <= this.tasks.size();
@@ -83,7 +83,7 @@ public class TaskList {
     /**
      * Returns the number of stored tasks.
      *
-     * @return task count
+     * @return task count.
      */
     public int size() {
         return this.tasks.size();
@@ -92,7 +92,7 @@ public class TaskList {
     /**
      * Returns a read-only view of all stored tasks.
      *
-     * @return unmodifiable task view
+     * @return unmodifiable task view.
      */
     public List<Task> getTasks() {
         return Collections.unmodifiableList(this.tasks);
@@ -101,8 +101,8 @@ public class TaskList {
     /**
      * Returns the indexes of tasks that occur on the given date.
      *
-     * @param date date to search
-     * @return zero-based indexes of matching tasks
+     * @param date date to search.
+     * @return zero-based indexes of matching tasks.
      */
     public List<Integer> findIndexesOnDate(LocalDate date) {
         List<Integer> matchingIndexes = new ArrayList<>();
@@ -117,8 +117,8 @@ public class TaskList {
     /**
      * Returns the task with the given displayed task number.
      *
-     * @param taskNumber displayed task number, starting from 1
-     * @return selected task
+     * @param taskNumber displayed task number, starting from 1.
+     * @return selected task.
      */
     private Task getTask(int taskNumber) {
         return this.tasks.get(taskNumber - 1);
