@@ -1,8 +1,13 @@
 package luigibot.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -11,6 +16,97 @@ import org.junit.jupiter.api.Test;
  * Tests date-based searching in {@link TaskList}.
  */
 public class TaskListTest {
+
+    @Test
+    public void constructor_sourceListChanged_taskListUnaffected() {
+        List<Task> sourceTasks = new ArrayList<>();
+        sourceTasks.add(new Todo("read book"));
+        TaskList tasks = new TaskList(sourceTasks);
+
+        sourceTasks.add(new Todo("return book"));
+
+        assertEquals(1, tasks.size());
+        assertEquals("[T][ ] read book", tasks.getTasks().get(0).toString());
+    }
+
+    @Test
+    public void add_validTask_taskAppendedAndSizeIncreased() {
+        TaskList tasks = new TaskList();
+        Todo todo = new Todo("read book");
+
+        tasks.add(todo);
+
+        assertEquals(1, tasks.size());
+        assertSame(todo, tasks.getTasks().get(0));
+    }
+
+    @Test
+    public void delete_middleTask_correctTaskRemovedAndReturned() {
+        Todo firstTask = new Todo("read book");
+        Todo secondTask = new Todo("return book");
+        Todo thirdTask = new Todo("borrow book");
+        TaskList tasks = new TaskList(List.of(firstTask, secondTask, thirdTask));
+
+        Task deletedTask = tasks.delete(2);
+
+        assertSame(secondTask, deletedTask);
+        assertEquals(List.of(firstTask, thirdTask), tasks.getTasks());
+        assertEquals(2, tasks.size());
+    }
+
+    @Test
+    public void mark_secondTask_correctTaskMarkedAndReturned() {
+        Todo firstTask = new Todo("read book");
+        Todo secondTask = new Todo("return book");
+        TaskList tasks = new TaskList(List.of(firstTask, secondTask));
+
+        Task markedTask = tasks.mark(2);
+
+        assertSame(secondTask, markedTask);
+        assertEquals("[ ]", firstTask.getStatusIcon());
+        assertEquals("[X]", secondTask.getStatusIcon());
+    }
+
+    @Test
+    public void unmark_secondTask_correctTaskUnmarkedAndReturned() {
+        Todo firstTask = new Todo("read book");
+        Todo secondTask = new Todo("return book");
+        firstTask.mark();
+        secondTask.mark();
+        TaskList tasks = new TaskList(List.of(firstTask, secondTask));
+
+        Task unmarkedTask = tasks.unmark(2);
+
+        assertSame(secondTask, unmarkedTask);
+        assertEquals("[X]", firstTask.getStatusIcon());
+        assertEquals("[ ]", secondTask.getStatusIcon());
+    }
+
+    @Test
+    public void isValidTaskNumber_boundaryAndOutOfRangeNumbers_correctResultReturned() {
+        TaskList tasks = new TaskList(List.of(
+                new Todo("read book"),
+                new Todo("return book")));
+
+        assertFalse(tasks.isValidTaskNumber(-1));
+        assertFalse(tasks.isValidTaskNumber(0));
+        assertTrue(tasks.isValidTaskNumber(1));
+        assertTrue(tasks.isValidTaskNumber(2));
+        assertFalse(tasks.isValidTaskNumber(3));
+    }
+
+    @Test
+    public void getTasks_taskAdded_viewUpdatedButCannotBeModifiedExternally() {
+        TaskList tasks = new TaskList();
+        List<Task> taskView = tasks.getTasks();
+        Todo todo = new Todo("read book");
+
+        tasks.add(todo);
+
+        assertEquals(List.of(todo), taskView);
+        assertThrows(UnsupportedOperationException.class,
+                () -> taskView.add(new Todo("return book")));
+    }
 
     @Test
     public void findIndexesOnDate_emptyTaskList_emptyListReturned() {

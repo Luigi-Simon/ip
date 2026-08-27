@@ -1,9 +1,12 @@
 package luigibot.task;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +14,56 @@ import org.junit.jupiter.api.Test;
  * Tests the date-overlap behavior of {@link Event}.
  */
 public class EventTest {
+
+    @Test
+    public void constructor_invalidStartDateTime_exceptionThrown() {
+        assertThrows(DateTimeParseException.class,
+                () -> new Event("project meeting", "2026-02-30 1400", "2026-08-27 1600"));
+    }
+
+    @Test
+    public void constructor_invalidEndDateTime_exceptionThrown() {
+        assertThrows(DateTimeParseException.class,
+                () -> new Event("project meeting", "2026-08-27 1400", "2026-08-27 2500"));
+    }
+
+    @Test
+    public void constructor_endEqualsStart_exceptionThrown() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Event("project meeting", "2026-08-27 1400", "2026-08-27 1400"));
+    }
+
+    @Test
+    public void constructor_endBeforeStart_exceptionThrown() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Event("project meeting", "2026-08-27 1600", "2026-08-27 1400"));
+    }
+
+    @Test
+    public void toString_incompleteAndCompletedEvent_correctDisplayReturned() {
+        Event event = new Event("project meeting", "2026-08-27 1400", "2026-08-27 1600");
+
+        assertEquals("[E][ ] project meeting "
+                + "(from: Aug 27 2026, 2:00 PM to: Aug 27 2026, 4:00 PM)", event.toString());
+
+        event.mark();
+
+        assertEquals("[E][X] project meeting "
+                + "(from: Aug 27 2026, 2:00 PM to: Aug 27 2026, 4:00 PM)", event.toString());
+    }
+
+    @Test
+    public void toFileString_incompleteAndCompletedEvent_correctStorageFormatReturned() {
+        Event event = new Event("project meeting", "2026-08-27 1400", "2026-08-27 1600");
+
+        assertEquals("E | 0 | project meeting | 2026-08-27 1400 | 2026-08-27 1600",
+                event.toFileString());
+
+        event.mark();
+
+        assertEquals("E | 1 | project meeting | 2026-08-27 1400 | 2026-08-27 1600",
+                event.toFileString());
+    }
 
     @Test
     public void occursOn_eventWithinDate_trueReturned() {
