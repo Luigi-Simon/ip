@@ -43,6 +43,11 @@ After every update to production code:
 
 ## Git
 
+Before proposing, reviewing, or creating commit messages, commits, or branch
+names, invoke the project-specific `$seedu-git-standard` skill. Every future
+commit message and branch name must follow the SE-EDU Git conventions
+described by that skill.
+
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
