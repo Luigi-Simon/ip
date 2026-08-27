@@ -34,7 +34,7 @@ public class Deadline extends Task {
     /**
      * Returns the deadline type icon, task details, and due time.
      *
-     * @return display form of this deadline
+     * @return display form of this deadline.
      */
     @Override
     public String toString() {
@@ -45,7 +45,7 @@ public class Deadline extends Task {
     /**
      * Returns this deadline in the text format used by the save file.
      *
-     * @return save-file representation of this deadline
+     * @return save-file representation of this deadline.
      */
     @Override
     public String toFileString() {
@@ -55,8 +55,8 @@ public class Deadline extends Task {
     /**
      * Returns whether this deadline is due on the given date.
      *
-     * @param date date to check
-     * @return true when the deadline is due on the given date
+     * @param date date to check.
+     * @return true when the deadline is due on the given date.
      */
     @Override
     public boolean occursOn(LocalDate date) {

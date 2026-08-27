@@ -29,7 +29,7 @@ public class Ui {
     /**
      * Reads the next command entered by the user.
      *
-     * @return full command entered by the user
+     * @return full command entered by the user.
      */
     public String readCommand() {
         return this.scanner.nextLine();
@@ -71,7 +71,7 @@ public class Ui {
     /**
      * Shows an error message between separator lines.
      *
-     * @param message error message to show
+     * @param message error message to show.
      */
     public void showError(String message) {
         System.out.println(LINE);
@@ -82,8 +82,8 @@ public class Ui {
     /**
      * Shows confirmation that a task was added.
      *
-     * @param task task that was added
-     * @param taskCount number of stored tasks after adding the task
+     * @param task task that was added.
+     * @param taskCount number of stored tasks after adding the task.
      */
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println(LINE);
@@ -96,7 +96,7 @@ public class Ui {
     /**
      * Shows confirmation that a task was marked as done.
      *
-     * @param task task that was marked
+     * @param task task that was marked.
      */
     public void showTaskMarked(Task task) {
         System.out.println(LINE);
@@ -108,7 +108,7 @@ public class Ui {
     /**
      * Shows confirmation that a task was marked as not done.
      *
-     * @param task task that was unmarked
+     * @param task task that was unmarked.
      */
     public void showTaskUnmarked(Task task) {
         System.out.println(LINE);
@@ -120,8 +120,8 @@ public class Ui {
     /**
      * Shows confirmation that a task was deleted.
      *
-     * @param task task that was deleted
-     * @param taskCount number of stored tasks after deleting the task
+     * @param task task that was deleted.
+     * @param taskCount number of stored tasks after deleting the task.
      */
     public void showTaskDeleted(Task task, int taskCount) {
         System.out.println(LINE);
@@ -134,7 +134,7 @@ public class Ui {
     /**
      * Shows all stored tasks using their original task numbers.
      *
-     * @param tasks stored tasks
+     * @param tasks stored tasks.
      */
     public void showTaskList(TaskList tasks) {
         System.out.println(LINE);
@@ -148,9 +148,9 @@ public class Ui {
     /**
      * Shows stored tasks that occur on a specified date.
      *
-     * @param date date being searched
-     * @param tasks stored tasks
-     * @param matchingIndexes indexes of tasks occurring on the date
+     * @param date date being searched.
+     * @param tasks stored tasks.
+     * @param matchingIndexes indexes of tasks occurring on the date.
      */
     public void showTasksOnDate(LocalDate date, TaskList tasks,
                                 List<Integer> matchingIndexes) {

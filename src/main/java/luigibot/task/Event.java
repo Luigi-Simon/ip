@@ -43,7 +43,7 @@ public class Event extends Task {
     /**
      * Returns the event type icon, task details, and time period.
      *
-     * @return display form of this event
+     * @return display form of this event.
      */
     @Override
     public String toString() {
@@ -55,7 +55,7 @@ public class Event extends Task {
     /**
      * Returns this event in the text format used by the save file.
      *
-     * @return save-file representation of this event
+     * @return save-file representation of this event.
      */
     @Override
     public String toFileString() {
@@ -66,8 +66,8 @@ public class Event extends Task {
     /**
      * Returns whether any part of this event occurs on the given date.
      *
-     * @param date date to check
-     * @return true when the event overlaps the given date
+     * @param date date to check.
+     * @return true when the event overlaps the given date.
      */
     @Override
     public boolean occursOn(LocalDate date) {

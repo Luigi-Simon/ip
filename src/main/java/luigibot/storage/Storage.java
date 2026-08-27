@@ -23,7 +23,7 @@ public class Storage {
     /**
      * Creates a storage manager that uses the given file path.
      *
-     * @param filePath path of the task data file
+     * @param filePath path of the task data file.
      */
     public Storage(String filePath) {
         this.savePath = Path.of(filePath);
@@ -32,8 +32,8 @@ public class Storage {
     /**
      * Writes the current task list to the hard disk.
      *
-     * @param tasks tasks to save
-     * @param ui user interface used to report save failures
+     * @param tasks tasks to save.
+     * @param ui user interface used to report save failures.
      */
     public void save(TaskList tasks, Ui ui) {
         try {
@@ -51,8 +51,8 @@ public class Storage {
     /**
      * Loads tasks from the save file, or returns an empty list when it does not exist.
      *
-     * @param ui user interface used to report invalid data and read failures
-     * @return tasks reconstructed from the save file
+     * @param ui user interface used to report invalid data and read failures.
+     * @return tasks reconstructed from the save file.
      */
     public List<Task> load(Ui ui) {
         List<Task> tasks = new ArrayList<>();
@@ -77,8 +77,8 @@ public class Storage {
     /**
      * Reconstructs one task from its save-file representation.
      *
-     * @param taskData save-file representation of one task
-     * @return reconstructed task
+     * @param taskData save-file representation of one task.
+     * @return reconstructed task.
      */
     private Task parseTask(String taskData) {
         String[] fields = taskData.split(" \\| ", -1);
