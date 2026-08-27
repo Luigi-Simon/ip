@@ -10,6 +10,7 @@ import luigibot.command.AddCommand;
 import luigibot.command.DeleteCommand;
 import luigibot.command.ExitCommand;
 import luigibot.command.FindCommand;
+import luigibot.command.FindKeywordCommand;
 import luigibot.command.ListCommand;
 import luigibot.command.MarkCommand;
 import luigibot.command.UnmarkCommand;
@@ -32,6 +33,7 @@ public class ParserTest {
         assertInstanceOf(DeleteCommand.class, this.parser.parse("delete 1"));
         assertInstanceOf(ListCommand.class, this.parser.parse("list"));
         assertInstanceOf(FindCommand.class, this.parser.parse("on 2026-08-27"));
+        assertInstanceOf(FindKeywordCommand.class, this.parser.parse("find book"));
         assertInstanceOf(ExitCommand.class, this.parser.parse("bye"));
     }
 
@@ -66,6 +68,17 @@ public class ParserTest {
         assertParseError("on", "Mamma mia! Luigi needs-a date. Use: on yyyy-MM-dd.");
         assertParseError("on 2026-02-30", "Mamma mia! Use-a yyyy-MM-dd for the date.");
         assertParseError("on tomorrow", "Mamma mia! Use-a yyyy-MM-dd for the date.");
+    }
+
+    @Test
+    public void parse_findKeyword_keywordCommandReturned() {
+        assertInstanceOf(FindKeywordCommand.class, this.parser.parse("find BOOK"));
+    }
+
+    @Test
+    public void parse_findWithoutKeyword_findDetailsErrorThrown() {
+        assertParseError("find", "Mamma mia! Luigi needs-a a keyword to find.");
+        assertParseError("find   ", "Mamma mia! Luigi needs-a a keyword to find.");
     }
 
     @Test
