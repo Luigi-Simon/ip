@@ -9,6 +9,12 @@ import luigibot.ui.Ui;
  */
 public class ExitCommand extends Command {
     /**
+     * Creates a command that ends the current LuigiBot session.
+     */
+    public ExitCommand() {
+    }
+
+    /**
      * Displays LuigiBot's goodbye message.
      *
      * @param tasks stored tasks

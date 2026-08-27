@@ -45,10 +45,17 @@ public class Parser {
             "Oh no! Luigi can't-a find that task number.";
 
     /**
+     * Creates a parser for LuigiBot commands.
+     */
+    public Parser() {
+    }
+
+    /**
      * Parses full user input and creates the corresponding command.
      *
-     * @param userInput full user input
-     * @return command represented by the user input
+     * @param userInput full user input.
+     * @return command represented by the user input.
+     * @throws IllegalArgumentException if the command is empty, unknown, or malformed.
      */
     public Command parse(String userInput) {
         if (userInput.isBlank()) {

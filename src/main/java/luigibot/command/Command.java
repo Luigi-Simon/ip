@@ -9,6 +9,12 @@ import luigibot.ui.Ui;
  */
 public abstract class Command {
     /**
+     * Creates a command for a concrete command subclass.
+     */
+    protected Command() {
+    }
+
+    /**
      * Executes the command using the application's task list, user interface, and storage.
      *
      * @param tasks stored tasks

@@ -9,6 +9,12 @@ import luigibot.ui.Ui;
  */
 public class ListCommand extends Command {
     /**
+     * Creates a command that displays the current task list.
+     */
+    public ListCommand() {
+    }
+
+    /**
      * Displays the current task list.
      *
      * @param tasks stored tasks

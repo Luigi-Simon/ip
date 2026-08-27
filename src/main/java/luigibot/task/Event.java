@@ -3,6 +3,7 @@ package luigibot.task;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Locale;
 
@@ -22,9 +23,11 @@ public class Event extends Task {
     /**
      * Creates an incomplete event with the given description and date-time period.
      *
-     * @param description description of the event
-     * @param from date and time at which the event starts, in yyyy-MM-dd HHmm format
-     * @param to date and time at which the event ends, in yyyy-MM-dd HHmm format
+     * @param description description of the event.
+     * @param from date and time at which the event starts, in yyyy-MM-dd HHmm format.
+     * @param to date and time at which the event ends, in yyyy-MM-dd HHmm format.
+     * @throws DateTimeParseException if either date and time is invalid or uses the wrong format.
+     * @throws IllegalArgumentException if the event does not end after it starts.
      */
     public Event(String description, String from, String to) {
         super(description);

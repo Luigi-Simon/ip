@@ -3,6 +3,7 @@ package luigibot.task;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Locale;
 
@@ -21,8 +22,9 @@ public class Deadline extends Task {
     /**
      * Creates an incomplete deadline with the given description and due date-time.
      *
-     * @param description description of the deadline
-     * @param by date and time by which the deadline must be completed, in yyyy-MM-dd HHmm format
+     * @param description description of the deadline.
+     * @param by date and time by which the deadline must be completed, in yyyy-MM-dd HHmm format.
+     * @throws DateTimeParseException if {@code by} is not a valid date and time in the required format.
      */
     public Deadline(String description, String by) {
         super(description);
