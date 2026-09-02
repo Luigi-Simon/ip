@@ -14,6 +14,8 @@ import luigibot.LuigiBot;
  * Controls the main LuigiBot GUI.
  */
 public class MainWindow extends AnchorPane {
+    private static final String WELCOME_MESSAGE = "Its a-me,LuigiBot!\nWhat can I do for you?";
+
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -46,6 +48,8 @@ public class MainWindow extends AnchorPane {
     @FXML
     public void initialize() {
         this.scrollPane.vvalueProperty().bind(this.dialogContainer.heightProperty());
+        this.dialogContainer.getChildren().add(
+                DialogBox.getLuigiDialog(WELCOME_MESSAGE, this.luigiImage));
     }
 
     /**
