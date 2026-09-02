@@ -14,6 +14,7 @@ import luigibot.LuigiBot;
  * Controls the main LuigiBot GUI.
  */
 public class MainWindow extends AnchorPane {
+    private static final String DIVIDER_LINE = "____________________________________________________________";
     private static final String WELCOME_MESSAGE = "Its a-me,LuigiBot!\nWhat can I do for you?";
 
     @FXML
@@ -63,10 +64,20 @@ public class MainWindow extends AnchorPane {
             return;
         }
 
-        String luigiText = this.luigiBot.getResponse(userText);
+        String luigiText = formatResponse(this.luigiBot.getResponse(userText));
         this.dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(userText, this.userImage),
                 DialogBox.getLuigiDialog(luigiText, this.luigiImage));
         this.userInput.clear();
+    }
+
+    /**
+     * Removes console-only separator lines before displaying a response in the GUI.
+     *
+     * @param response Console-formatted LuigiBot response.
+     * @return Response text formatted for a chat dialog.
+     */
+    static String formatResponse(String response) {
+        return response.replace(DIVIDER_LINE, "").trim();
     }
 }

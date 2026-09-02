@@ -8,13 +8,16 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity"
+            id="mainLayout"
             minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="600.0" prefWidth="400.0"
+            stylesheets="@MainWindow.css"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="luigibot.gui.MainWindow">
     <children>
         <ScrollPane fx:id="scrollPane"
+                    id="scrollPane"
                     hbarPolicy="NEVER"
                     prefHeight="557.0"
                     prefWidth="400.0"
@@ -22,22 +25,24 @@
                     AnchorPane.topAnchor="1.0">
             <content>
                 <VBox fx:id="dialogContainer"
+                      id="dialogContainer"
                       prefHeight="552.0"
                       prefWidth="388.0" />
             </content>
         </ScrollPane>
         <TextField fx:id="userInput"
+                   id="userInput"
                    onAction="#handleUserInput"
                    prefHeight="41.0"
                    prefWidth="324.0"
                    AnchorPane.bottomAnchor="1.0"
                    AnchorPane.leftAnchor="1.0" />
         <Button mnemonicParsing="false"
+                id="sendButton"
                 onAction="#handleUserInput"
                 prefHeight="41.0"
                 prefWidth="76.0"
                 text="Send"
-                textFill="#ff9b9b"
                 AnchorPane.bottomAnchor="1.0"
                 AnchorPane.rightAnchor="1.0">
             <font>

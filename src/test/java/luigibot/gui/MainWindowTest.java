@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 
 class MainWindowTest {
@@ -51,5 +52,33 @@ class MainWindowTest {
 
         assertEquals("Its a-me,LuigiBot!\nWhat can I do for you?",
                 welcomeDialogText.get(5, TimeUnit.SECONDS));
+    }
+
+    @Test
+    void formatResponse_consoleDividerLines_cleanResponseReturned() {
+        String responseWithDividers = "____________________________________________________________\n"
+                + "Okie-dokie! Luigi added this task:\n"
+                + "  [T][ ] borrow book\n"
+                + "You've-a got 1 tasks now!\n"
+                + "____________________________________________________________\n";
+
+        assertEquals("Okie-dokie! Luigi added this task:\n"
+                        + "  [T][ ] borrow book\n"
+                        + "You've-a got 1 tasks now!",
+                MainWindow.formatResponse(responseWithDividers));
+    }
+
+    @Test
+    void getUserDialog_userMessage_userDialogStyleApplied() {
+        DialogBox userDialog = DialogBox.getUserDialog("hello", new WritableImage(1, 1));
+
+        assertTrue(userDialog.getStyleClass().contains("user-dialog"));
+    }
+
+    @Test
+    void getLuigiDialog_luigiMessage_luigiDialogStyleApplied() {
+        DialogBox luigiDialog = DialogBox.getLuigiDialog("hello", new WritableImage(1, 1));
+
+        assertTrue(luigiDialog.getStyleClass().contains("luigi-dialog"));
     }
 }

@@ -47,7 +47,9 @@ public class DialogBox extends HBox {
      * @return dialog aligned for the user.
      */
     public static DialogBox getUserDialog(String text, Image image) {
-        return new DialogBox(text, image);
+        DialogBox dialogBox = new DialogBox(text, image);
+        dialogBox.getStyleClass().add("user-dialog");
+        return dialogBox;
     }
 
     /**
@@ -59,6 +61,7 @@ public class DialogBox extends HBox {
      */
     public static DialogBox getLuigiDialog(String text, Image image) {
         DialogBox dialogBox = new DialogBox(text, image);
+        dialogBox.getStyleClass().add("luigi-dialog");
         dialogBox.flip();
         return dialogBox;
     }
