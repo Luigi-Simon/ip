@@ -78,13 +78,11 @@ def parse_test_plan(plan_path: Path) -> list[TestCase]:
     return cases
 
 
-def compile_program(repo_root: Path, classes_dir: Path) -> None:
-    """Compile all project Java sources into a temporary directory."""
-    sources = sorted((repo_root / "src" / "main" / "java").rglob("*.java"))
-    if not sources:
-        raise RuntimeError("No Java source files found under src/main/java")
+def compile_program(repo_root: Path) -> Path:
+    """Compile the project with Gradle and return its main classes directory."""
+    gradle_wrapper = repo_root / ("gradlew.bat" if sys.platform == "win32" else "gradlew")
     result = subprocess.run(
-        ["javac", "-d", str(classes_dir), *(str(source) for source in sources)],
+        [str(gradle_wrapper), "classes"],
         cwd=repo_root,
         capture_output=True,
         text=True,
@@ -92,6 +90,10 @@ def compile_program(repo_root: Path, classes_dir: Path) -> None:
     )
     if result.returncode != 0:
         raise RuntimeError(f"Compilation failed:\n{result.stdout}{result.stderr}")
+    classes_dir = repo_root / "build" / "classes" / "java" / "main"
+    if not classes_dir.is_dir():
+        raise RuntimeError(f"Gradle did not create the classes directory: {classes_dir}")
+    return classes_dir
 
 
 def run_case(working_dir: Path, classes_dir: Path, case: TestCase) -> str:
@@ -158,8 +160,7 @@ def main() -> int:
     try:
         cases = parse_test_plan(plan_path)
         with tempfile.TemporaryDirectory(prefix="luigibot-ui-") as temp_dir:
-            classes_dir = Path(temp_dir)
-            compile_program(repo_root, classes_dir)
+            classes_dir = compile_program(repo_root)
             print(f"Running {len(cases)} UI test case(s) from {plan_path}")
             for index, case in enumerate(cases, start=1):
                 working_dir = Path(temp_dir) / f"case-{index}"
