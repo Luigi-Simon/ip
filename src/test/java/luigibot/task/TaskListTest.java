@@ -104,8 +104,8 @@ public class TaskListTest {
         tasks.add(todo);
 
         assertEquals(List.of(todo), taskView);
-        assertThrows(UnsupportedOperationException.class,
-                () -> taskView.add(new Todo("return book")));
+        assertThrows(UnsupportedOperationException.class, () ->
+                taskView.add(new Todo("return book")));
     }
 
     @Test

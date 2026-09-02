@@ -17,26 +17,26 @@ public class EventTest {
 
     @Test
     public void constructor_invalidStartDateTime_exceptionThrown() {
-        assertThrows(DateTimeParseException.class,
-                () -> new Event("project meeting", "2026-02-30 1400", "2026-08-27 1600"));
+        assertThrows(DateTimeParseException.class, () ->
+                new Event("project meeting", "2026-02-30 1400", "2026-08-27 1600"));
     }
 
     @Test
     public void constructor_invalidEndDateTime_exceptionThrown() {
-        assertThrows(DateTimeParseException.class,
-                () -> new Event("project meeting", "2026-08-27 1400", "2026-08-27 2500"));
+        assertThrows(DateTimeParseException.class, () ->
+                new Event("project meeting", "2026-08-27 1400", "2026-08-27 2500"));
     }
 
     @Test
     public void constructor_endEqualsStart_exceptionThrown() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Event("project meeting", "2026-08-27 1400", "2026-08-27 1400"));
+        assertThrows(IllegalArgumentException.class, () ->
+                new Event("project meeting", "2026-08-27 1400", "2026-08-27 1400"));
     }
 
     @Test
     public void constructor_endBeforeStart_exceptionThrown() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Event("project meeting", "2026-08-27 1600", "2026-08-27 1400"));
+        assertThrows(IllegalArgumentException.class, () ->
+                new Event("project meeting", "2026-08-27 1600", "2026-08-27 1400"));
     }
 
     @Test

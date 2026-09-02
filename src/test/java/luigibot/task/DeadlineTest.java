@@ -17,14 +17,14 @@ public class DeadlineTest {
 
     @Test
     public void constructor_invalidDate_exceptionThrown() {
-        assertThrows(DateTimeParseException.class,
-                () -> new Deadline("return book", "2026-02-30 1800"));
+        assertThrows(DateTimeParseException.class, () ->
+                new Deadline("return book", "2026-02-30 1800"));
     }
 
     @Test
     public void constructor_invalidTime_exceptionThrown() {
-        assertThrows(DateTimeParseException.class,
-                () -> new Deadline("return book", "2026-08-27 2500"));
+        assertThrows(DateTimeParseException.class, () ->
+                new Deadline("return book", "2026-08-27 2500"));
     }
 
     @Test

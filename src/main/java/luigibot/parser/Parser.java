@@ -66,23 +66,23 @@ public class Parser {
         String commandWord = getCommandWord(userInput);
         String arguments = getArguments(userInput);
         return switch (commandWord) {
-        case "delete" -> parseDeleteCommand(arguments);
-        case "unmark" -> new UnmarkCommand(parseTaskNumber(arguments));
-        case "mark" -> new MarkCommand(parseTaskNumber(arguments));
-        case "list" -> {
-            validateExactCommand(userInput, "list");
-            yield new ListCommand();
-        }
-        case "on" -> new FindCommand(parseDate(arguments));
-        case "find" -> new FindKeywordCommand(parseKeyword(arguments));
-        case "todo" -> new AddCommand(parseTodo(arguments));
-        case "deadline" -> new AddCommand(parseDeadline(arguments));
-        case "event" -> new AddCommand(parseEvent(arguments));
-        case "bye" -> {
-            validateExactCommand(userInput, "bye");
-            yield new ExitCommand();
-        }
-        default -> throw new IllegalArgumentException(UNKNOWN_COMMAND_ERROR);
+            case "delete" -> parseDeleteCommand(arguments);
+            case "unmark" -> new UnmarkCommand(parseTaskNumber(arguments));
+            case "mark" -> new MarkCommand(parseTaskNumber(arguments));
+            case "list" -> {
+                validateExactCommand(userInput, "list");
+                yield new ListCommand();
+            }
+            case "on" -> new FindCommand(parseDate(arguments));
+            case "find" -> new FindKeywordCommand(parseKeyword(arguments));
+            case "todo" -> new AddCommand(parseTodo(arguments));
+            case "deadline" -> new AddCommand(parseDeadline(arguments));
+            case "event" -> new AddCommand(parseEvent(arguments));
+            case "bye" -> {
+                validateExactCommand(userInput, "bye");
+                yield new ExitCommand();
+            }
+            default -> throw new IllegalArgumentException(UNKNOWN_COMMAND_ERROR);
         };
     }
 
