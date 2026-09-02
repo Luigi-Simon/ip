@@ -93,9 +93,7 @@ public class Ui {
      * @param message error message to show.
      */
     public void showError(String message) {
-        this.output.println(LINE);
-        this.output.println(message);
-        this.output.println(LINE);
+        this.showMessage(message);
     }
 
     /**
@@ -105,11 +103,10 @@ public class Ui {
      * @param taskCount number of stored tasks after adding the task.
      */
     public void showTaskAdded(Task task, int taskCount) {
-        this.output.println(LINE);
-        this.output.println("Okie-dokie! Luigi added this task:");
-        this.output.println("  " + task);
-        this.output.println("You've-a got " + taskCount + " tasks now!");
-        this.output.println(LINE);
+        this.showMessage(
+                "Okie-dokie! Luigi added this task:",
+                "  " + task,
+                "You've-a got " + taskCount + " tasks now!");
     }
 
     /**
@@ -118,10 +115,9 @@ public class Ui {
      * @param task task that was marked.
      */
     public void showTaskMarked(Task task) {
-        this.output.println(LINE);
-        this.output.println("Nice-a! Luigi marked this task as done:");
-        this.output.println("  " + task);
-        this.output.println(LINE);
+        this.showMessage(
+                "Nice-a! Luigi marked this task as done:",
+                "  " + task);
     }
 
     /**
@@ -130,10 +126,9 @@ public class Ui {
      * @param task task that was unmarked.
      */
     public void showTaskUnmarked(Task task) {
-        this.output.println(LINE);
-        this.output.println("No problem! Luigi marked this task as not done:");
-        this.output.println("  " + task);
-        this.output.println(LINE);
+        this.showMessage(
+                "No problem! Luigi marked this task as not done:",
+                "  " + task);
     }
 
     /**
@@ -143,11 +138,10 @@ public class Ui {
      * @param taskCount number of stored tasks after deleting the task.
      */
     public void showTaskDeleted(Task task, int taskCount) {
-        this.output.println(LINE);
-        this.output.println("Okie-dokie! Luigi removed this task:");
-        this.output.println("  " + task);
-        this.output.println("You've-a got " + taskCount + " tasks now!");
-        this.output.println(LINE);
+        this.showMessage(
+                "Okie-dokie! Luigi removed this task:",
+                "  " + task,
+                "You've-a got " + taskCount + " tasks now!");
     }
 
     /**
@@ -205,6 +199,19 @@ public class Ui {
             for (int index : matchingIndexes) {
                 this.output.println((index + 1) + "." + tasks.getTasks().get(index));
             }
+        }
+        this.output.println(LINE);
+    }
+
+    /**
+     * Shows a message between separator lines.
+     *
+     * @param lines lines that make up the message.
+     */
+    private void showMessage(String... lines) {
+        this.output.println(LINE);
+        for (String line : lines) {
+            this.output.println(line);
         }
         this.output.println(LINE);
     }
