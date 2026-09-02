@@ -2,6 +2,7 @@ package luigibot.gui;
 
 import java.util.Objects;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -69,6 +70,10 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getUserDialog(userText, this.userImage),
                 DialogBox.getLuigiDialog(luigiText, this.luigiImage));
         this.userInput.clear();
+
+        if (this.luigiBot.isExitRequested()) {
+            Platform.exit();
+        }
     }
 
     /**

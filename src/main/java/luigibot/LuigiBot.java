@@ -16,6 +16,7 @@ public class LuigiBot {
     private final Storage storage;
     private final Parser parser;
     private TaskList tasks;
+    private boolean isExitRequested;
 
     /**
      * Creates LuigiBot using the specified task-file path.
@@ -59,13 +60,23 @@ public class LuigiBot {
         StringWriter response = new StringWriter();
         Ui responseUi = new Ui(response);
         this.loadTasks(responseUi);
+        this.isExitRequested = false;
 
         try {
-            this.executeCommand(userInput, responseUi);
+            this.isExitRequested = this.executeCommand(userInput, responseUi);
         } catch (IllegalArgumentException exception) {
             responseUi.showError(exception.getMessage());
         }
         return response.toString().stripTrailing();
+    }
+
+    /**
+     * Indicates whether the most recently processed GUI command requests exit.
+     *
+     * @return true if the most recent command is an exit command.
+     */
+    public boolean isExitRequested() {
+        return this.isExitRequested;
     }
 
     private void loadTasks(Ui ui) {

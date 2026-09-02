@@ -1,6 +1,8 @@
 package luigibot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,6 +64,26 @@ class LuigiBotTest {
                 "Let's-a see what Luigi has on the list:",
                 "1.[T][X] saved task",
                 LINE), response);
+    }
+
+    @Test
+    void getResponse_byeCommand_exitRequested() {
+        Path savePath = this.temporaryDirectory.resolve("tasks.txt");
+        LuigiBot luigiBot = new LuigiBot(savePath.toString());
+
+        luigiBot.getResponse("bye");
+
+        assertTrue(luigiBot.isExitRequested());
+    }
+
+    @Test
+    void getResponse_nonExitCommand_exitNotRequested() {
+        Path savePath = this.temporaryDirectory.resolve("tasks.txt");
+        LuigiBot luigiBot = new LuigiBot(savePath.toString());
+
+        luigiBot.getResponse("list");
+
+        assertFalse(luigiBot.isExitRequested());
     }
 
     private static String response(String... lines) {
