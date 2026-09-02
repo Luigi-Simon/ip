@@ -148,8 +148,8 @@ public class ParserTest {
     }
 
     private void assertParseError(String input, String expectedMessage) {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> this.parser.parse(input));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                this.parser.parse(input));
         assertEquals(expectedMessage, exception.getMessage());
     }
 }
