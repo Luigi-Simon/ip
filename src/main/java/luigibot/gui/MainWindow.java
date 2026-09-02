@@ -1,18 +1,19 @@
 package luigibot.gui;
 
+import java.util.Objects;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import luigibot.LuigiBot;
 
 /**
  * Controls the main LuigiBot GUI.
  */
 public class MainWindow extends AnchorPane {
-    private static final String ECHO_PREFIX = "Okie-dokie! Luigi heard-a: ";
-
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -20,6 +21,7 @@ public class MainWindow extends AnchorPane {
     @FXML
     private TextField userInput;
 
+    private LuigiBot luigiBot;
     private final Image userImage = new Image(getClass().getResourceAsStream("/images/Mario.png"));
     private final Image luigiImage = new Image(getClass().getResourceAsStream("/images/Luigi.png"));
 
@@ -27,6 +29,15 @@ public class MainWindow extends AnchorPane {
      * Creates the controller used by the FXML loader.
      */
     public MainWindow() {
+    }
+
+    /**
+     * Sets the LuigiBot instance that processes GUI commands.
+     *
+     * @param luigiBot LuigiBot instance used by the GUI.
+     */
+    public void setLuigiBot(LuigiBot luigiBot) {
+        this.luigiBot = Objects.requireNonNull(luigiBot);
     }
 
     /**
@@ -38,7 +49,7 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Displays the user's message and a temporary Luigi-style response.
+     * Displays the user's message and LuigiBot's response.
      */
     @FXML
     private void handleUserInput() {
@@ -48,7 +59,7 @@ public class MainWindow extends AnchorPane {
             return;
         }
 
-        String luigiText = ECHO_PREFIX + userText;
+        String luigiText = this.luigiBot.getResponse(userText);
         this.dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(userText, this.userImage),
                 DialogBox.getLuigiDialog(luigiText, this.luigiImage));
