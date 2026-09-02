@@ -1,5 +1,7 @@
 package luigibot;
 
+import java.io.StringWriter;
+
 import luigibot.command.Command;
 import luigibot.parser.Parser;
 import luigibot.storage.Storage;
@@ -32,21 +34,50 @@ public class LuigiBot {
     public void run() {
         this.ui.showGreeting();
 
-        this.tasks = new TaskList(this.storage.load(this.ui));
+        this.loadTasks(this.ui);
 
         boolean isExit = false;
         while (!isExit) {
             try {
                 String userInput = this.ui.readCommand();
-                Command command = this.parser.parse(userInput);
-                command.execute(this.tasks, this.ui, this.storage);
-                isExit = command.isExit();
+                isExit = this.executeCommand(userInput, this.ui);
             } catch (IllegalArgumentException exception) {
                 this.ui.showError(exception.getMessage());
             }
         }
 
         this.ui.close();
+    }
+
+    /**
+     * Processes one user command and returns LuigiBot's response.
+     *
+     * @param userInput full command entered by the user.
+     * @return LuigiBot's response to the command.
+     */
+    public String getResponse(String userInput) {
+        StringWriter response = new StringWriter();
+        Ui responseUi = new Ui(response);
+        this.loadTasks(responseUi);
+
+        try {
+            this.executeCommand(userInput, responseUi);
+        } catch (IllegalArgumentException exception) {
+            responseUi.showError(exception.getMessage());
+        }
+        return response.toString().stripTrailing();
+    }
+
+    private void loadTasks(Ui ui) {
+        if (this.tasks == null) {
+            this.tasks = new TaskList(this.storage.load(ui));
+        }
+    }
+
+    private boolean executeCommand(String userInput, Ui ui) {
+        Command command = this.parser.parse(userInput);
+        command.execute(this.tasks, ui, this.storage);
+        return command.isExit();
     }
 
     /**

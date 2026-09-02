@@ -1,5 +1,7 @@
 package luigibot.ui;
 
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -18,12 +20,24 @@ public class Ui {
             DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
 
     private final Scanner scanner;
+    private final PrintWriter output;
 
     /**
      * Creates a user interface that reads from standard input.
      */
     public Ui() {
         this.scanner = new Scanner(System.in);
+        this.output = new PrintWriter(System.out, true);
+    }
+
+    /**
+     * Creates a user interface that writes to the specified destination.
+     *
+     * @param output destination for LuigiBot's responses.
+     */
+    public Ui(Writer output) {
+        this.scanner = null;
+        this.output = new PrintWriter(output, true);
     }
 
     /**
@@ -32,6 +46,9 @@ public class Ui {
      * @return full command entered by the user.
      */
     public String readCommand() {
+        if (this.scanner == null) {
+            throw new IllegalStateException("This user interface does not accept input");
+        }
         return this.scanner.nextLine();
     }
 
@@ -39,33 +56,35 @@ public class Ui {
      * Closes the input scanner.
      */
     public void close() {
-        this.scanner.close();
+        if (this.scanner != null) {
+            this.scanner.close();
+        }
     }
 
     /**
      * Shows LuigiBot's welcome banner and greeting.
      */
     public void showGreeting() {
-        System.out.println(LINE);
+        this.output.println(LINE);
         String banner = ".____          .__       .____________        __   \n"
                 + "|    |    __ __|__| ____ |__\\______   \\ _____/  |_\n"
                 + "|    |   |  |  \\  |/ ___\\|  ||    |  _//  _ \\   __\\\n"
                 + "|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | \n"
                 + "|_______ \\____/|__\\___  /|__||______  /\\____/|__|\n"
                 + "        \\/       /_____/            \\/             \n";
-        System.out.print(banner);
-        System.out.println(LINE);
-        System.out.println("Its a-me,LuigiBot!");
-        System.out.println("What can I do for you?");
-        System.out.println(LINE);
+        this.output.print(banner);
+        this.output.println(LINE);
+        this.output.println("Its a-me,LuigiBot!");
+        this.output.println("What can I do for you?");
+        this.output.println(LINE);
     }
 
     /**
      * Shows LuigiBot's goodbye message.
      */
     public void showGoodbye() {
-        System.out.println("Mama mia! Leaving already? Cya soon!");
-        System.out.println(LINE);
+        this.output.println("Mama mia! Leaving already? Cya soon!");
+        this.output.println(LINE);
     }
 
     /**
@@ -74,9 +93,9 @@ public class Ui {
      * @param message error message to show.
      */
     public void showError(String message) {
-        System.out.println(LINE);
-        System.out.println(message);
-        System.out.println(LINE);
+        this.output.println(LINE);
+        this.output.println(message);
+        this.output.println(LINE);
     }
 
     /**
@@ -86,11 +105,11 @@ public class Ui {
      * @param taskCount number of stored tasks after adding the task.
      */
     public void showTaskAdded(Task task, int taskCount) {
-        System.out.println(LINE);
-        System.out.println("Okie-dokie! Luigi added this task:");
-        System.out.println("  " + task);
-        System.out.println("You've-a got " + taskCount + " tasks now!");
-        System.out.println(LINE);
+        this.output.println(LINE);
+        this.output.println("Okie-dokie! Luigi added this task:");
+        this.output.println("  " + task);
+        this.output.println("You've-a got " + taskCount + " tasks now!");
+        this.output.println(LINE);
     }
 
     /**
@@ -99,10 +118,10 @@ public class Ui {
      * @param task task that was marked.
      */
     public void showTaskMarked(Task task) {
-        System.out.println(LINE);
-        System.out.println("Nice-a! Luigi marked this task as done:");
-        System.out.println("  " + task);
-        System.out.println(LINE);
+        this.output.println(LINE);
+        this.output.println("Nice-a! Luigi marked this task as done:");
+        this.output.println("  " + task);
+        this.output.println(LINE);
     }
 
     /**
@@ -111,10 +130,10 @@ public class Ui {
      * @param task task that was unmarked.
      */
     public void showTaskUnmarked(Task task) {
-        System.out.println(LINE);
-        System.out.println("No problem! Luigi marked this task as not done:");
-        System.out.println("  " + task);
-        System.out.println(LINE);
+        this.output.println(LINE);
+        this.output.println("No problem! Luigi marked this task as not done:");
+        this.output.println("  " + task);
+        this.output.println(LINE);
     }
 
     /**
@@ -124,11 +143,11 @@ public class Ui {
      * @param taskCount number of stored tasks after deleting the task.
      */
     public void showTaskDeleted(Task task, int taskCount) {
-        System.out.println(LINE);
-        System.out.println("Okie-dokie! Luigi removed this task:");
-        System.out.println("  " + task);
-        System.out.println("You've-a got " + taskCount + " tasks now!");
-        System.out.println(LINE);
+        this.output.println(LINE);
+        this.output.println("Okie-dokie! Luigi removed this task:");
+        this.output.println("  " + task);
+        this.output.println("You've-a got " + taskCount + " tasks now!");
+        this.output.println(LINE);
     }
 
     /**
@@ -137,12 +156,12 @@ public class Ui {
      * @param tasks stored tasks.
      */
     public void showTaskList(TaskList tasks) {
-        System.out.println(LINE);
-        System.out.println("Let's-a see what Luigi has on the list:");
+        this.output.println(LINE);
+        this.output.println("Let's-a see what Luigi has on the list:");
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + "." + tasks.getTasks().get(i));
+            this.output.println((i + 1) + "." + tasks.getTasks().get(i));
         }
-        System.out.println(LINE);
+        this.output.println(LINE);
     }
 
     /**
@@ -154,18 +173,18 @@ public class Ui {
      */
     public void showTasksOnDate(LocalDate date, TaskList tasks,
                                 List<Integer> matchingIndexes) {
-        System.out.println(LINE);
+        this.output.println(LINE);
         if (matchingIndexes.isEmpty()) {
-            System.out.println("Mamma mia! Luigi found-a no tasks on "
+            this.output.println("Mamma mia! Luigi found-a no tasks on "
                     + date.format(DATE_DISPLAY_FORMAT) + ".");
         } else {
-            System.out.println("Luigi found-a these tasks on "
+            this.output.println("Luigi found-a these tasks on "
                     + date.format(DATE_DISPLAY_FORMAT) + ":");
             for (int index : matchingIndexes) {
-                System.out.println((index + 1) + "." + tasks.getTasks().get(index));
+                this.output.println((index + 1) + "." + tasks.getTasks().get(index));
             }
         }
-        System.out.println(LINE);
+        this.output.println(LINE);
     }
 
     /**
@@ -177,16 +196,16 @@ public class Ui {
      */
     public void showTasksMatchingKeyword(String keyword, TaskList tasks,
                                          List<Integer> matchingIndexes) {
-        System.out.println(LINE);
+        this.output.println(LINE);
         if (matchingIndexes.isEmpty()) {
-            System.out.println("Mamma mia! Luigi found-a no tasks matching \""
+            this.output.println("Mamma mia! Luigi found-a no tasks matching \""
                     + keyword + "\".");
         } else {
-            System.out.println("Here are the matching tasks in Luigi's list:");
+            this.output.println("Here are the matching tasks in Luigi's list:");
             for (int index : matchingIndexes) {
-                System.out.println((index + 1) + "." + tasks.getTasks().get(index));
+                this.output.println((index + 1) + "." + tasks.getTasks().get(index));
             }
         }
-        System.out.println(LINE);
+        this.output.println(LINE);
     }
 }
