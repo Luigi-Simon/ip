@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import luigibot.command.AddCommand;
 import luigibot.command.DeleteCommand;
 import luigibot.command.ExitCommand;
-import luigibot.command.FindCommand;
+import luigibot.command.FindDateCommand;
 import luigibot.command.FindKeywordCommand;
 import luigibot.command.ListCommand;
 import luigibot.command.MarkCommand;
@@ -32,7 +32,7 @@ public class ParserTest {
         assertInstanceOf(UnmarkCommand.class, this.parser.parse("unmark 1"));
         assertInstanceOf(DeleteCommand.class, this.parser.parse("delete 1"));
         assertInstanceOf(ListCommand.class, this.parser.parse("list"));
-        assertInstanceOf(FindCommand.class, this.parser.parse("on 2026-08-27"));
+        assertInstanceOf(FindDateCommand.class, this.parser.parse("on 2026-08-27"));
         assertInstanceOf(FindKeywordCommand.class, this.parser.parse("find book"));
         assertInstanceOf(ExitCommand.class, this.parser.parse("bye"));
     }

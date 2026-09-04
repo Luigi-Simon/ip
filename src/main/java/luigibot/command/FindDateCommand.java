@@ -10,7 +10,7 @@ import luigibot.ui.Ui;
 /**
  * Displays tasks that occur on a specified date.
  */
-public class FindCommand extends Command {
+public class FindDateCommand extends Command {
     private final LocalDate date;
 
     /**
@@ -18,7 +18,7 @@ public class FindCommand extends Command {
      *
      * @param date date to search.
      */
-    public FindCommand(LocalDate date) {
+    public FindDateCommand(LocalDate date) {
         this.date = date;
     }
 

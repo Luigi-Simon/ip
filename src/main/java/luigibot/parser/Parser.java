@@ -9,7 +9,7 @@ import luigibot.command.AddCommand;
 import luigibot.command.Command;
 import luigibot.command.DeleteCommand;
 import luigibot.command.ExitCommand;
-import luigibot.command.FindCommand;
+import luigibot.command.FindDateCommand;
 import luigibot.command.FindKeywordCommand;
 import luigibot.command.ListCommand;
 import luigibot.command.MarkCommand;
@@ -25,6 +25,9 @@ public class Parser {
     private static final DateTimeFormatter DATE_INPUT_FORMAT =
             DateTimeFormatter.ofPattern("uuuu-MM-dd")
                     .withResolverStyle(ResolverStyle.STRICT);
+    private static final String DEADLINE_MARKER = "/by";
+    private static final String EVENT_FROM_MARKER = "/from";
+    private static final String EVENT_TO_MARKER = "/to";
 
     private static final String EMPTY_DESCRIPTION_ERROR =
             "Mamma mia! The task description can't-a be empty.";
@@ -73,7 +76,7 @@ public class Parser {
                 validateExactCommand(userInput, "list");
                 yield new ListCommand();
             }
-            case "on" -> new FindCommand(parseDate(arguments));
+            case "on" -> new FindDateCommand(parseDate(arguments));
             case "find" -> new FindKeywordCommand(parseKeyword(arguments));
             case "todo" -> new AddCommand(parseTodo(arguments));
             case "deadline" -> new AddCommand(parseDeadline(arguments));
@@ -134,13 +137,13 @@ public class Parser {
      * @return parsed Deadline.
      */
     private Deadline parseDeadline(String arguments) {
-        int byIndex = arguments.indexOf("/by");
-        if (!hasMarker(arguments, byIndex, 3)) {
+        int byIndex = arguments.indexOf(DEADLINE_MARKER);
+        if (!hasMarker(arguments, byIndex, DEADLINE_MARKER.length())) {
             throw new IllegalArgumentException(DEADLINE_DETAILS_ERROR);
         }
 
         String description = arguments.substring(0, byIndex).trim();
-        String by = arguments.substring(byIndex + 3).trim();
+        String by = arguments.substring(byIndex + DEADLINE_MARKER.length()).trim();
         if (description.isEmpty()) {
             throw new IllegalArgumentException(EMPTY_DESCRIPTION_ERROR);
         }
@@ -162,17 +165,17 @@ public class Parser {
      * @return parsed Event.
      */
     private Event parseEvent(String arguments) {
-        int fromIndex = arguments.indexOf("/from");
-        int toIndex = arguments.indexOf("/to");
-        boolean hasFromMarker = hasMarker(arguments, fromIndex, 5);
-        boolean hasToMarker = hasMarker(arguments, toIndex, 3);
+        int fromIndex = arguments.indexOf(EVENT_FROM_MARKER);
+        int toIndex = arguments.indexOf(EVENT_TO_MARKER);
+        boolean hasFromMarker = hasMarker(arguments, fromIndex, EVENT_FROM_MARKER.length());
+        boolean hasToMarker = hasMarker(arguments, toIndex, EVENT_TO_MARKER.length());
         if (!hasFromMarker || !hasToMarker || fromIndex >= toIndex) {
             throw new IllegalArgumentException(EVENT_DETAILS_ERROR);
         }
 
         String description = arguments.substring(0, fromIndex).trim();
-        String from = arguments.substring(fromIndex + 5, toIndex).trim();
-        String to = arguments.substring(toIndex + 3).trim();
+        String from = arguments.substring(fromIndex + EVENT_FROM_MARKER.length(), toIndex).trim();
+        String to = arguments.substring(toIndex + EVENT_TO_MARKER.length()).trim();
         if (description.isEmpty()) {
             throw new IllegalArgumentException(EMPTY_DESCRIPTION_ERROR);
         }

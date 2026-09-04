@@ -79,12 +79,24 @@ public class LuigiBot {
         return this.isExitRequested;
     }
 
+    /**
+     * Loads saved tasks the first time LuigiBot needs its task list.
+     *
+     * @param ui user interface used to report loading errors.
+     */
     private void loadTasks(Ui ui) {
         if (this.tasks == null) {
             this.tasks = new TaskList(this.storage.load(ui));
         }
     }
 
+    /**
+     * Parses and executes one command.
+     *
+     * @param userInput full command entered by the user.
+     * @param ui user interface used to display the command result.
+     * @return true when the command requests exit.
+     */
     private boolean executeCommand(String userInput, Ui ui) {
         Command command = this.parser.parse(userInput);
         command.execute(this.tasks, ui, this.storage);
