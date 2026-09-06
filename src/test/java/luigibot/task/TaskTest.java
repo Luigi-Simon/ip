@@ -2,6 +2,7 @@ package luigibot.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 
@@ -11,6 +12,16 @@ import org.junit.jupiter.api.Test;
  * Tests completion state and common representations in {@link Task}.
  */
 public class TaskTest {
+
+    @Test
+    public void constructor_nullDescription_assertionThrown() {
+        assertThrows(AssertionError.class, () -> new Task(null));
+    }
+
+    @Test
+    public void constructor_blankDescription_assertionThrown() {
+        assertThrows(AssertionError.class, () -> new Task("   "));
+    }
 
     @Test
     public void markAndUnmark_validTransitions_statusIconUpdated() {
