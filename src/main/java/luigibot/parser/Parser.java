@@ -137,8 +137,8 @@ public class Parser {
      * @return parsed Deadline.
      */
     private Deadline parseDeadline(String arguments) {
-        int byIndex = arguments.indexOf(DEADLINE_MARKER);
-        if (!hasMarker(arguments, byIndex, DEADLINE_MARKER.length())) {
+        int byIndex = findMarkerIndex(arguments, DEADLINE_MARKER);
+        if (byIndex < 0) {
             throw new IllegalArgumentException(DEADLINE_DETAILS_ERROR);
         }
 
@@ -165,11 +165,9 @@ public class Parser {
      * @return parsed Event.
      */
     private Event parseEvent(String arguments) {
-        int fromIndex = arguments.indexOf(EVENT_FROM_MARKER);
-        int toIndex = arguments.indexOf(EVENT_TO_MARKER);
-        boolean hasFromMarker = hasMarker(arguments, fromIndex, EVENT_FROM_MARKER.length());
-        boolean hasToMarker = hasMarker(arguments, toIndex, EVENT_TO_MARKER.length());
-        if (!hasFromMarker || !hasToMarker || fromIndex >= toIndex) {
+        int fromIndex = findMarkerIndex(arguments, EVENT_FROM_MARKER);
+        int toIndex = findMarkerIndex(arguments, EVENT_TO_MARKER);
+        if (fromIndex < 0 || toIndex < 0 || fromIndex >= toIndex) {
             throw new IllegalArgumentException(EVENT_DETAILS_ERROR);
         }
 
@@ -241,18 +239,24 @@ public class Parser {
     }
 
     /**
-     * Returns whether text at the given index is a separate command marker.
+     * Returns the index of a separate command marker in the given text.
      *
      * @param text text containing the marker.
-     * @param markerIndex index where the marker starts.
-     * @param markerLength number of characters in the marker.
-     * @return true when whitespace or a string boundary surrounds the marker.
+     * @param marker marker to find.
+     * @return marker index when whitespace or a string boundary surrounds it, or -1 otherwise.
      */
-    private boolean hasMarker(String text, int markerIndex, int markerLength) {
-        return markerIndex >= 0
-                && (markerIndex == 0 || Character.isWhitespace(text.charAt(markerIndex - 1)))
-                && (markerIndex + markerLength == text.length()
-                || Character.isWhitespace(text.charAt(markerIndex + markerLength)));
+    private int findMarkerIndex(String text, String marker) {
+        int markerIndex = text.indexOf(marker);
+        if (markerIndex < 0) {
+            return -1;
+        }
+
+        int markerEndIndex = markerIndex + marker.length();
+        boolean hasStartBoundary = markerIndex == 0
+                || Character.isWhitespace(text.charAt(markerIndex - 1));
+        boolean hasEndBoundary = markerEndIndex == text.length()
+                || Character.isWhitespace(text.charAt(markerEndIndex));
+        return hasStartBoundary && hasEndBoundary ? markerIndex : -1;
     }
 
     /**
