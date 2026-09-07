@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Owns and manages LuigiBot's collection of tasks.
@@ -117,13 +119,10 @@ public class TaskList {
     public List<Integer> findIndexesOnDate(LocalDate date) {
         assert date != null : "search date should not be null";
 
-        List<Integer> matchingIndexes = new ArrayList<>();
-        for (int i = 0; i < this.tasks.size(); i++) {
-            if (this.tasks.get(i).occursOn(date)) {
-                matchingIndexes.add(i);
-            }
-        }
-        return matchingIndexes;
+        return IntStream.range(0, this.tasks.size())
+                .filter(index -> this.tasks.get(index).occursOn(date))
+                .boxed()
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
@@ -136,13 +135,10 @@ public class TaskList {
         assert keyword != null : "search keyword should not be null";
         assert !keyword.isBlank() : "search keyword should not be blank";
 
-        List<Integer> matchingIndexes = new ArrayList<>();
-        for (int i = 0; i < this.tasks.size(); i++) {
-            if (this.tasks.get(i).matchesDescription(keyword)) {
-                matchingIndexes.add(i);
-            }
-        }
-        return matchingIndexes;
+        return IntStream.range(0, this.tasks.size())
+                .filter(index -> this.tasks.get(index).matchesDescription(keyword))
+                .boxed()
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
