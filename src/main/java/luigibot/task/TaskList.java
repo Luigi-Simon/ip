@@ -26,6 +26,9 @@ public class TaskList {
      * @param tasks initial tasks.
      */
     public TaskList(List<Task> tasks) {
+        assert tasks != null : "initial task collection should not be null";
+        assert hasNoNullTasks(tasks) : "initial task collection should not contain null";
+
         this.tasks = new ArrayList<>(tasks);
     }
 
@@ -35,6 +38,8 @@ public class TaskList {
      * @param task task to add.
      */
     public void add(Task task) {
+        assert task != null : "task to add should not be null";
+
         this.tasks.add(task);
     }
 
@@ -46,6 +51,8 @@ public class TaskList {
      * @throws IndexOutOfBoundsException if the task number does not identify a stored task.
      */
     public Task delete(int taskNumber) {
+        assert isValidTaskNumber(taskNumber) : "task number should identify a stored task";
+
         return this.tasks.remove(taskNumber - 1);
     }
 
@@ -110,6 +117,8 @@ public class TaskList {
      * @return zero-based indexes of matching tasks.
      */
     public List<Integer> findIndexesOnDate(LocalDate date) {
+        assert date != null : "search date should not be null";
+
         return IntStream.range(0, this.tasks.size())
                 .filter(index -> this.tasks.get(index).occursOn(date))
                 .boxed()
@@ -123,6 +132,9 @@ public class TaskList {
      * @return zero-based indexes of matching tasks
      */
     public List<Integer> findIndexesByKeyword(String keyword) {
+        assert keyword != null : "search keyword should not be null";
+        assert !keyword.isBlank() : "search keyword should not be blank";
+
         return IntStream.range(0, this.tasks.size())
                 .filter(index -> this.tasks.get(index).matchesDescription(keyword))
                 .boxed()
@@ -136,6 +148,23 @@ public class TaskList {
      * @return selected task.
      */
     private Task getTask(int taskNumber) {
+        assert isValidTaskNumber(taskNumber) : "task number should identify a stored task";
+
         return this.tasks.get(taskNumber - 1);
+    }
+
+    /**
+     * Returns whether the given collection contains no null tasks.
+     *
+     * @param tasks tasks to inspect.
+     * @return true when every task is non-null.
+     */
+    private static boolean hasNoNullTasks(List<Task> tasks) {
+        for (Task task : tasks) {
+            if (task == null) {
+                return false;
+            }
+        }
+        return true;
     }
 }
