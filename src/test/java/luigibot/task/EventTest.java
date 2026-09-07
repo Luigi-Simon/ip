@@ -113,4 +113,29 @@ public class EventTest {
 
         assertFalse(event.occursOn(LocalDate.of(2026, 8, 28)));
     }
+
+    @Test
+    public void overlaps_partiallyOverlappingEvents_trueReturned() {
+        Event event = new Event("team meeting", "2026-08-27 1400", "2026-08-27 1600");
+        Event overlappingEvent = new Event("project meeting", "2026-08-27 1500", "2026-08-27 1700");
+
+        assertTrue(event.overlaps(overlappingEvent));
+        assertTrue(overlappingEvent.overlaps(event));
+    }
+
+    @Test
+    public void overlaps_eventContainedWithinAnotherEvent_trueReturned() {
+        Event event = new Event("conference", "2026-08-27 0900", "2026-08-27 1700");
+        Event containedEvent = new Event("lunch", "2026-08-27 1200", "2026-08-27 1300");
+
+        assertTrue(event.overlaps(containedEvent));
+    }
+
+    @Test
+    public void overlaps_eventStartsWhenOtherEnds_falseReturned() {
+        Event event = new Event("team meeting", "2026-08-27 1400", "2026-08-27 1600");
+        Event followingEvent = new Event("project meeting", "2026-08-27 1600", "2026-08-27 1700");
+
+        assertFalse(event.overlaps(followingEvent));
+    }
 }

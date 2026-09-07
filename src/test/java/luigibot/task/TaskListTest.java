@@ -205,4 +205,25 @@ public class TaskListTest {
         assertThrows(AssertionError.class, () -> tasks.findIndexesByKeyword(null));
         assertThrows(AssertionError.class, () -> tasks.findIndexesByKeyword("   "));
     }
+
+    @Test
+    public void findIndexesClashingWith_multipleOverlappingEvents_zeroBasedIndexesInListOrderReturned() {
+        TaskList tasks = new TaskList(List.of(
+                new Todo("read book"),
+                new Event("team meeting", "2026-08-27 0900", "2026-08-27 1000"),
+                new Deadline("submit report", "2026-08-27 1000"),
+                new Event("project meeting", "2026-08-27 1000", "2026-08-27 1100")));
+        Event newEvent = new Event("design review", "2026-08-27 0930", "2026-08-27 1030");
+
+        assertEquals(List.of(1, 3), tasks.findIndexesClashingWith(newEvent));
+    }
+
+    @Test
+    public void findIndexesClashingWith_noOverlappingEvents_emptyListReturned() {
+        TaskList tasks = new TaskList(List.of(
+                new Event("team meeting", "2026-08-27 0900", "2026-08-27 1000")));
+        Event newEvent = new Event("project meeting", "2026-08-27 1000", "2026-08-27 1100");
+
+        assertEquals(List.of(), tasks.findIndexesClashingWith(newEvent));
+    }
 }

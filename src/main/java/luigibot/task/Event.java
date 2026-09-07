@@ -75,4 +75,17 @@ public class Event extends Task {
         LocalDateTime startOfNextDay = date.plusDays(1).atStartOfDay();
         return this.from.isBefore(startOfNextDay) && this.to.isAfter(startOfDay);
     }
+
+    /**
+     * Returns whether this event shares any time with another event.
+     * Events that meet exactly at an endpoint do not overlap.
+     *
+     * @param other event to compare with.
+     * @return true when the two events share a time period.
+     */
+    public boolean overlaps(Event other) {
+        assert other != null : "event to compare should not be null";
+
+        return this.from.isBefore(other.to) && this.to.isAfter(other.from);
+    }
 }
