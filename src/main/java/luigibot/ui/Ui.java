@@ -110,6 +110,21 @@ public class Ui {
     }
 
     /**
+     * Shows an error for events that overlap with an event about to be added.
+     *
+     * @param tasks stored tasks.
+     * @param clashingIndexes zero-based indexes of clashing events.
+     */
+    public void showEventClashes(TaskList tasks, List<Integer> clashingIndexes) {
+        this.output.println(LINE);
+        this.output.println("Mamma mia! Luigi can't-a add that Event because it clashes with:");
+        for (int index : clashingIndexes) {
+            this.output.println((index + 1) + "." + tasks.getTasks().get(index));
+        }
+        this.output.println(LINE);
+    }
+
+    /**
      * Shows confirmation that a task was marked as done.
      *
      * @param task task that was marked.

@@ -674,6 +674,50 @@ Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
 ```
 
+## Test case: Reject a clashing Event
+
+**Aim:** Verify that LuigiBot rejects an overlapping Event without changing the task list.
+
+### Input
+
+```text
+event team meeting /from 2019-12-02 1400 /to 2019-12-02 1600
+event project meeting /from 2019-12-02 1500 /to 2019-12-02 1700
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [E][ ] team meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Luigi can't-a add that Event because it clashes with:
+1.[E][ ] team meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
+____________________________________________________________
+____________________________________________________________
+Let's-a see what Luigi has on the list:
+1.[E][ ] team meeting (from: Dec 02 2019, 2:00 PM to: Dec 02 2019, 4:00 PM)
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
 ## Test case: Find dated tasks on a specific date
 
 **Aim:** Verify that the `on` command finds Deadlines and Events occurring on a date while excluding Todos.

@@ -86,6 +86,44 @@ class LuigiBotTest {
         assertFalse(luigiBot.isExitRequested());
     }
 
+    @Test
+    void getResponse_clashingEvent_errorAndExistingTaskPreserved() {
+        Path savePath = this.temporaryDirectory.resolve("tasks.txt");
+        LuigiBot luigiBot = new LuigiBot(savePath.toString());
+        luigiBot.getResponse("event team meeting /from 2026-08-27 1400 /to 2026-08-27 1600");
+
+        String response = luigiBot.getResponse(
+                "event project meeting /from 2026-08-27 1500 /to 2026-08-27 1700");
+
+        assertEquals(response(
+                LINE,
+                "Mamma mia! Luigi can't-a add that Event because it clashes with:",
+                "1.[E][ ] team meeting (from: Aug 27 2026, 2:00 PM to: Aug 27 2026, 4:00 PM)",
+                LINE), response);
+        assertEquals(response(
+                LINE,
+                "Let's-a see what Luigi has on the list:",
+                "1.[E][ ] team meeting (from: Aug 27 2026, 2:00 PM to: Aug 27 2026, 4:00 PM)",
+                LINE), luigiBot.getResponse("list"));
+    }
+
+    @Test
+    void getResponse_adjacentEvent_onlyConfirmationReturned() {
+        Path savePath = this.temporaryDirectory.resolve("tasks.txt");
+        LuigiBot luigiBot = new LuigiBot(savePath.toString());
+        luigiBot.getResponse("event team meeting /from 2026-08-27 1400 /to 2026-08-27 1600");
+
+        String response = luigiBot.getResponse(
+                "event project meeting /from 2026-08-27 1600 /to 2026-08-27 1700");
+
+        assertEquals(response(
+                LINE,
+                "Okie-dokie! Luigi added this task:",
+                "  [E][ ] project meeting (from: Aug 27 2026, 4:00 PM to: Aug 27 2026, 5:00 PM)",
+                "You've-a got 2 tasks now!",
+                LINE), response);
+    }
+
     private static String response(String... lines) {
         return String.join(System.lineSeparator(), lines);
     }

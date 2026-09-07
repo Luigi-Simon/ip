@@ -1,6 +1,9 @@
 package luigibot.command;
 
+import java.util.List;
+
 import luigibot.storage.Storage;
+import luigibot.task.Event;
 import luigibot.task.Task;
 import luigibot.task.TaskList;
 import luigibot.ui.Ui;
@@ -29,6 +32,14 @@ public class AddCommand extends Command {
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
+        if (this.task instanceof Event event) {
+            List<Integer> clashingIndexes = tasks.findIndexesClashingWith(event);
+            if (!clashingIndexes.isEmpty()) {
+                ui.showEventClashes(tasks, clashingIndexes);
+                return;
+            }
+        }
+
         tasks.add(this.task);
         storage.save(tasks, ui);
         ui.showTaskAdded(this.task, tasks.size());

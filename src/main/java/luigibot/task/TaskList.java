@@ -142,6 +142,23 @@ public class TaskList {
     }
 
     /**
+     * Returns the indexes of events that overlap with the given event.
+     * Tasks without a time period, such as todos and deadlines, are not included.
+     *
+     * @param event event to compare against.
+     * @return zero-based indexes of clashing events.
+     */
+    public List<Integer> findIndexesClashingWith(Event event) {
+        assert event != null : "event to compare should not be null";
+
+        return IntStream.range(0, this.tasks.size())
+                .filter(index -> this.tasks.get(index) instanceof Event existingEvent
+                        && event.overlaps(existingEvent))
+                .boxed()
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
      * Returns the task with the given displayed task number.
      *
      * @param taskNumber displayed task number, starting from 1.
