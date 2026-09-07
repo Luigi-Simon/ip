@@ -18,6 +18,19 @@ import org.junit.jupiter.api.Test;
 public class TaskListTest {
 
     @Test
+    public void constructor_nullTaskCollection_assertionThrown() {
+        assertThrows(AssertionError.class, () -> new TaskList(null));
+    }
+
+    @Test
+    public void constructor_collectionContainingNull_assertionThrown() {
+        List<Task> sourceTasks = new ArrayList<>();
+        sourceTasks.add(null);
+
+        assertThrows(AssertionError.class, () -> new TaskList(sourceTasks));
+    }
+
+    @Test
     public void constructor_sourceListChanged_taskListUnaffected() {
         List<Task> sourceTasks = new ArrayList<>();
         sourceTasks.add(new Todo("read book"));
@@ -41,6 +54,13 @@ public class TaskListTest {
     }
 
     @Test
+    public void add_nullTask_assertionThrown() {
+        TaskList tasks = new TaskList();
+
+        assertThrows(AssertionError.class, () -> tasks.add(null));
+    }
+
+    @Test
     public void delete_middleTask_correctTaskRemovedAndReturned() {
         Todo firstTask = new Todo("read book");
         Todo secondTask = new Todo("return book");
@@ -52,6 +72,14 @@ public class TaskListTest {
         assertSame(secondTask, deletedTask);
         assertEquals(List.of(firstTask, thirdTask), tasks.getTasks());
         assertEquals(2, tasks.size());
+    }
+
+    @Test
+    public void delete_invalidTaskNumber_assertionThrown() {
+        TaskList tasks = new TaskList(List.of(new Todo("read book")));
+
+        assertThrows(AssertionError.class, () -> tasks.delete(0));
+        assertThrows(AssertionError.class, () -> tasks.delete(2));
     }
 
     @Test
@@ -80,6 +108,14 @@ public class TaskListTest {
         assertSame(secondTask, unmarkedTask);
         assertEquals("[X]", firstTask.getStatusIcon());
         assertEquals("[ ]", secondTask.getStatusIcon());
+    }
+
+    @Test
+    public void markAndUnmark_invalidTaskNumber_assertionThrown() {
+        TaskList tasks = new TaskList(List.of(new Todo("read book")));
+
+        assertThrows(AssertionError.class, () -> tasks.mark(0));
+        assertThrows(AssertionError.class, () -> tasks.unmark(2));
     }
 
     @Test
@@ -113,6 +149,13 @@ public class TaskListTest {
         TaskList tasks = new TaskList();
 
         assertEquals(List.of(), tasks.findIndexesOnDate(LocalDate.of(2026, 8, 27)));
+    }
+
+    @Test
+    public void findIndexesOnDate_nullDate_assertionThrown() {
+        TaskList tasks = new TaskList();
+
+        assertThrows(AssertionError.class, () -> tasks.findIndexesOnDate(null));
     }
 
     @Test
@@ -153,5 +196,13 @@ public class TaskListTest {
         TaskList tasks = new TaskList(List.of(new Todo("read book")));
 
         assertEquals(List.of(), tasks.findIndexesByKeyword("report"));
+    }
+
+    @Test
+    public void findIndexesByKeyword_nullOrBlankKeyword_assertionThrown() {
+        TaskList tasks = new TaskList();
+
+        assertThrows(AssertionError.class, () -> tasks.findIndexesByKeyword(null));
+        assertThrows(AssertionError.class, () -> tasks.findIndexesByKeyword("   "));
     }
 }
