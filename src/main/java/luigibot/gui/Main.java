@@ -30,7 +30,7 @@ public class Main extends Application {
         Scene scene = new Scene(mainLayout);
 
         stage.setTitle("LuigiBot");
-        stage.setResizable(false);
+        stage.setResizable(true);
         stage.setScene(scene);
         stage.show();
     }
