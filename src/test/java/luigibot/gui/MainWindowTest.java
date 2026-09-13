@@ -60,6 +60,19 @@ class MainWindowTest {
     }
 
     @Test
+    void initialize_mainWindowLoaded_inputPromptDisplayed() throws Exception {
+        FutureTask<String> inputPrompt = new FutureTask<>(() -> {
+            FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/MainWindow.fxml"));
+            fxmlLoader.load();
+            TextField userInput = (TextField) fxmlLoader.getNamespace().get("userInput");
+            return userInput.getPromptText();
+        });
+        Platform.runLater(inputPrompt);
+
+        assertEquals("Type a command...", inputPrompt.get(5, TimeUnit.SECONDS));
+    }
+
+    @Test
     void formatResponse_consoleDividerLines_cleanResponseReturned() {
         String responseWithDividers = "____________________________________________________________\n"
                 + "Okie-dokie! Luigi added this task:\n"

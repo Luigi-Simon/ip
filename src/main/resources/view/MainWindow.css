@@ -13,8 +13,8 @@
 
 #dialogContainer {
     -fx-background-color: #F4E3B0;
-    -fx-padding: 8;
-    -fx-spacing: 4;
+    -fx-padding: 12;
+    -fx-spacing: 8;
 }
 
 .label {
@@ -43,6 +43,12 @@
     -fx-border-color: #9B7607;
     -fx-border-radius: 8 0 0 8;
     -fx-font-size: 14px;
+    -fx-padding: 0 10;
+    -fx-prompt-text-fill: #7A6A43;
+}
+
+#userInput:focused {
+    -fx-border-color: #00A000;
 }
 
 #sendButton {
