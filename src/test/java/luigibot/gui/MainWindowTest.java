@@ -14,8 +14,12 @@ import org.junit.jupiter.api.Test;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 class MainWindowTest {
 
@@ -28,6 +32,7 @@ class MainWindowTest {
             toolkitStarted.countDown();
         }
         assertTrue(toolkitStarted.await(5, TimeUnit.SECONDS));
+        Platform.setImplicitExit(false);
     }
 
     @Test
@@ -80,5 +85,41 @@ class MainWindowTest {
         DialogBox luigiDialog = DialogBox.getLuigiDialog("hello", new WritableImage(1, 1));
 
         assertTrue(luigiDialog.getStyleClass().contains("luigi-dialog"));
+    }
+
+    @Test
+    void start_applicationOpened_windowIsResizable() throws Exception {
+        FutureTask<Boolean> isResizable = new FutureTask<>(() -> {
+            Stage stage = new Stage();
+            try {
+                new Main().start(stage);
+                return stage.isResizable();
+            } finally {
+                stage.close();
+            }
+        });
+        Platform.runLater(isResizable);
+
+        assertTrue(isResizable.get(5, TimeUnit.SECONDS));
+    }
+
+    @Test
+    void mainWindow_windowWidened_conversationAndInputAreasExpand() throws Exception {
+        FutureTask<double[]> resizedWidths = new FutureTask<>(() -> {
+            FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/MainWindow.fxml"));
+            AnchorPane mainLayout = fxmlLoader.load();
+            ScrollPane scrollPane = (ScrollPane) fxmlLoader.getNamespace().get("scrollPane");
+            TextField userInput = (TextField) fxmlLoader.getNamespace().get("userInput");
+
+            mainLayout.resize(600, 600);
+            mainLayout.applyCss();
+            mainLayout.layout();
+            return new double[]{scrollPane.getWidth(), userInput.getWidth()};
+        });
+        Platform.runLater(resizedWidths);
+
+        double[] widths = resizedWidths.get(5, TimeUnit.SECONDS);
+        assertTrue(widths[0] > 500);
+        assertTrue(widths[1] > 400);
     }
 }
