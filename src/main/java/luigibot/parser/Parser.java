@@ -31,6 +31,8 @@ public class Parser {
 
     private static final String EMPTY_DESCRIPTION_ERROR =
             "Mamma mia! The task description can't-a be empty.";
+    private static final String INVALID_DESCRIPTION_ERROR =
+            "Mamma mia! Task descriptions can't-a contain the | symbol.";
     private static final String DEADLINE_DETAILS_ERROR =
             "Oh no! Luigi needs-a know the deadline! Use /by.";
     private static final String DEADLINE_DATE_ERROR =
@@ -66,14 +68,15 @@ public class Parser {
             throw new IllegalArgumentException(EMPTY_COMMAND_ERROR);
         }
 
-        String commandWord = getCommandWord(userInput);
-        String arguments = getArguments(userInput);
+        String normalizedInput = userInput.strip();
+        String commandWord = getCommandWord(normalizedInput);
+        String arguments = getArguments(normalizedInput);
         return switch (commandWord) {
             case "delete" -> parseDeleteCommand(arguments);
             case "unmark" -> new UnmarkCommand(parseTaskNumber(arguments));
             case "mark" -> new MarkCommand(parseTaskNumber(arguments));
             case "list" -> {
-                validateExactCommand(userInput, "list");
+                validateExactCommand(normalizedInput, "list");
                 yield new ListCommand();
             }
             case "on" -> new FindDateCommand(parseDate(arguments));
@@ -82,7 +85,7 @@ public class Parser {
             case "deadline" -> new AddCommand(parseDeadline(arguments));
             case "event" -> new AddCommand(parseEvent(arguments));
             case "bye" -> {
-                validateExactCommand(userInput, "bye");
+                validateExactCommand(normalizedInput, "bye");
                 yield new ExitCommand();
             }
             default -> throw new IllegalArgumentException(UNKNOWN_COMMAND_ERROR);
@@ -124,9 +127,7 @@ public class Parser {
      * @return parsed Todo.
      */
     private Todo parseTodo(String arguments) {
-        if (arguments.isEmpty()) {
-            throw new IllegalArgumentException(EMPTY_DESCRIPTION_ERROR);
-        }
+        validateDescription(arguments);
         return new Todo(arguments);
     }
 
@@ -144,9 +145,7 @@ public class Parser {
 
         String description = arguments.substring(0, byIndex).trim();
         String by = arguments.substring(byIndex + DEADLINE_MARKER.length()).trim();
-        if (description.isEmpty()) {
-            throw new IllegalArgumentException(EMPTY_DESCRIPTION_ERROR);
-        }
+        validateDescription(description);
         if (by.isEmpty()) {
             throw new IllegalArgumentException(DEADLINE_DETAILS_ERROR);
         }
@@ -174,9 +173,7 @@ public class Parser {
         String description = arguments.substring(0, fromIndex).trim();
         String from = arguments.substring(fromIndex + EVENT_FROM_MARKER.length(), toIndex).trim();
         String to = arguments.substring(toIndex + EVENT_TO_MARKER.length()).trim();
-        if (description.isEmpty()) {
-            throw new IllegalArgumentException(EMPTY_DESCRIPTION_ERROR);
-        }
+        validateDescription(description);
         if (from.isEmpty() || to.isEmpty()) {
             throw new IllegalArgumentException(EVENT_DETAILS_ERROR);
         }
@@ -236,6 +233,20 @@ public class Parser {
             throw new IllegalArgumentException("Mamma mia! Luigi needs-a a keyword to find.");
         }
         return keywordText;
+    }
+
+    /**
+     * Validates a task description before it is stored.
+     *
+     * @param description task description to validate.
+     */
+    private void validateDescription(String description) {
+        if (description.isEmpty()) {
+            throw new IllegalArgumentException(EMPTY_DESCRIPTION_ERROR);
+        }
+        if (description.contains("|")) {
+            throw new IllegalArgumentException(INVALID_DESCRIPTION_ERROR);
+        }
     }
 
     /**

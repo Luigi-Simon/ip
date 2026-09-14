@@ -38,6 +38,12 @@ public class ParserTest {
     }
 
     @Test
+    public void parse_commandWithOuterWhitespace_correctCommandTypeReturned() {
+        assertInstanceOf(ListCommand.class, this.parser.parse("  list  "));
+        assertInstanceOf(AddCommand.class, this.parser.parse("  todo read book  "));
+    }
+
+    @Test
     public void parse_blankCommand_emptyCommandErrorThrown() {
         assertParseError("   ", "Mamma mia! You didn't-a enter a command.");
     }
@@ -84,6 +90,16 @@ public class ParserTest {
     @Test
     public void parse_todoWithoutDescription_emptyDescriptionErrorThrown() {
         assertParseError("todo", "Mamma mia! The task description can't-a be empty.");
+    }
+
+    @Test
+    public void parse_descriptionContainingPipe_invalidDescriptionErrorThrown() {
+        String expectedMessage = "Mamma mia! Task descriptions can't-a contain the | symbol.";
+
+        assertParseError("todo read | book", expectedMessage);
+        assertParseError("deadline return | book /by 2026-08-27 1800", expectedMessage);
+        assertParseError("event team | meeting /from 2026-08-27 1400 /to 2026-08-27 1600",
+                expectedMessage);
     }
 
     @Test
