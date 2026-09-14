@@ -41,6 +41,49 @@ Mama mia! Leaving already? Cya soon!
 ____________________________________________________________
 ```
 
+## Test case: Handle outer whitespace and unsafe descriptions
+
+**Aim:** Verify that harmless outer whitespace is accepted while descriptions that would corrupt storage are rejected without changing the task list.
+
+### Input
+
+```text
+  todo read book
+todo read | book
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+.____          .__       .____________        __   
+|    |    __ __|__| ____ |__\______   \ _____/  |_
+|    |   |  |  \  |/ ___\|  ||    |  _//  _ \   __\
+|    |___|  |  /  / /_/  >  ||    |   (  <_> )  | 
+|_______ \____/|__\___  /|__||______  /\____/|__|
+        \/       /_____/            \/             
+____________________________________________________________
+Its a-me,LuigiBot!
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Okie-dokie! Luigi added this task:
+  [T][ ] read book
+You've-a got 1 tasks now!
+____________________________________________________________
+____________________________________________________________
+Mamma mia! Task descriptions can't-a contain the | symbol.
+____________________________________________________________
+____________________________________________________________
+Let's-a see what Luigi has on the list:
+1.[T][ ] read book
+____________________________________________________________
+Mama mia! Leaving already? Cya soon!
+____________________________________________________________
+```
+
 ## Test case: Find tasks by description keyword
 
 **Aim:** Verify that `find` performs a case-insensitive description search, preserves task numbering, and reports when there are no matches.
