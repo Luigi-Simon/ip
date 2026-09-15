@@ -15,7 +15,7 @@ public class FindKeywordCommand extends Command {
     /**
      * Creates a command that searches task descriptions for a keyword.
      *
-     * @param keyword keyword to search for
+     * @param keyword keyword to search for.
      */
     public FindKeywordCommand(String keyword) {
         this.keyword = keyword;
@@ -24,9 +24,9 @@ public class FindKeywordCommand extends Command {
     /**
      * Finds and displays tasks containing the keyword.
      *
-     * @param tasks stored tasks
-     * @param ui user interface used to display matching tasks
-     * @param storage storage dependency required by the common command interface
+     * @param tasks stored tasks.
+     * @param ui user interface used to display matching tasks.
+     * @param storage storage dependency required by the common command interface.
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
