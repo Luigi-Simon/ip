@@ -68,8 +68,8 @@ public class Task {
     /**
      * Returns whether this task description contains the given keyword.
      *
-     * @param keyword keyword to search for
-     * @return true when the description contains the keyword, ignoring case
+     * @param keyword keyword to search for.
+     * @return true when the description contains the keyword, ignoring case.
      */
     public boolean matchesDescription(String keyword) {
         return this.description.toLowerCase(Locale.ENGLISH)

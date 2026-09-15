@@ -225,8 +225,8 @@ public class Parser {
     /**
      * Parses a keyword used to search task descriptions.
      *
-     * @param keywordText keyword entered by the user
-     * @return trimmed keyword
+     * @param keywordText keyword entered by the user.
+     * @return trimmed keyword.
      */
     private String parseKeyword(String keywordText) {
         if (keywordText.isEmpty()) {

@@ -199,9 +199,9 @@ public class Ui {
     /**
      * Shows tasks whose descriptions contain a keyword.
      *
-     * @param keyword keyword being searched
-     * @param tasks stored tasks
-     * @param matchingIndexes indexes of matching tasks
+     * @param keyword keyword being searched.
+     * @param tasks stored tasks.
+     * @param matchingIndexes indexes of matching tasks.
      */
     public void showTasksMatchingKeyword(String keyword, TaskList tasks,
                                          List<Integer> matchingIndexes) {

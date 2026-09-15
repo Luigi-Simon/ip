@@ -128,8 +128,8 @@ public class TaskList {
     /**
      * Returns the indexes of tasks whose descriptions contain the keyword.
      *
-     * @param keyword keyword to search for, ignoring case
-     * @return zero-based indexes of matching tasks
+     * @param keyword keyword to search for, ignoring case.
+     * @return zero-based indexes of matching tasks.
      */
     public List<Integer> findIndexesByKeyword(String keyword) {
         assert keyword != null : "search keyword should not be null";
